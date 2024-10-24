@@ -1,0 +1,14 @@
+.container {
+    display: grid;                          // Użyj CSS Grid
+    grid-template-columns: repeat(4, 1fr); // Ustaw 4 kolumny, każda o równej szerokości
+    width: 100%;                            // Kontener na 100% szerokości
+  
+    img {
+      width: 100%;                          // Ustaw szerokość na 100%
+      height: auto;                         // Utrzymaj proporcje
+      object-fit: cover;                    // Obrazki wypełniają kontener
+    }
+  }
+  
+
+  

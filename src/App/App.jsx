@@ -2,31 +2,13 @@ import s from "./app.module.scss"
 
 export default function App() {
   return (
-    <>
-      <div className={s.container}>
-        <img src="./photos/bones.png"></img>
-        <img src="./photos/brain.png"></img>
-        <img src="./photos/heart.png"></img>
-        <img src="./photos/kidney.png"></img>
-      </div>
-      <div className={s.container}>
-        <img src="./photos/bones.png"></img>
-        <img src="./photos/brain.png"></img>
-        <img src="./photos/heart.png"></img>
-        <img src="./photos/kidney.png"></img>
-      </div>
-      <div className={s.container}>
-        <img src="./photos/bones.png"></img>
-        <img src="./photos/brain.png"></img>
-        <img src="./photos/heart.png"></img>
-        <img src="./photos/kidney.png"></img>
-      </div>
-      <div className={s.container}>
-        <img src="./photos/bones.png"></img>
-        <img src="./photos/brain.png"></img>
-        <img src="./photos/heart.png"></img>
-        <img src="./photos/kidney.png"></img>
-      </div>
-    </>
+    <div className={s.container}>
+      <h1>Virus</h1>
+      
+      <form>
+        <input type="text" placeholder="enter your name"></input>
+        <button type="submit">START</button>
+      </form>
+    </div>
   )
 }

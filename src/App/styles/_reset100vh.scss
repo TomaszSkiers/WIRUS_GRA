@@ -1,0 +1,21 @@
+/* RESET 100vh*/
+/* 1. Remove default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* 2. Ensure all elements inherit box-sizing */
+  html {
+    box-sizing: border-box;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+  
+  /* 3. Set 100% height for html, body, and #root */
+  html, body, #root {
+    height: 100%;
+  }

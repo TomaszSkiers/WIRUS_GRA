@@ -1,2 +1,26 @@
 icons - freepic
 icons - font awesome
+
+betterComments: TODO, ?, *. !
+
+database:
+project name Virus_game
+pswd ZVyWFxMRYUs16VFj
+
+key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqZ29qaWh6bnVveHB3amJja3VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk4NjI5NjYsImV4cCI6MjA0NTQzODk2Nn0.PLThYi8xvaMoW_DiorHM6J8lIQp0Ik-EMhQmVStbTWg
+
+url https://pjgojihznuoxpwjbckun.supabase.co
+
+
+***** zapisuję jak mi coś wpadnie do głowy ****
+
+//pobrać id użytkownika z localStorage i ustawić użytkownika jako aktywny
+//obsłużyć sytuacje gdy id nie będzie sie znajdowało w bazie danych
+//jakoś ograniczyć liczbę użytkowników np: do 5 bo wydłuży się czas oczekiwania
+//informacja o aktywnym użytkowniku kogo jest teraz kolej u wszystkich, którzy grają
+//timer do odliczania czasu jak ktoś się nie rusza to jego tura mija 
+//timer do wywalania całkiem z gry jak ktoś nie gra to go usuwa po jakimś czasie
+//jak zrobić żeby kolejno każdy miał swoją kolej
+
+
+//zrobić testową główną stronę gry 

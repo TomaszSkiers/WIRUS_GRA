@@ -1,0 +1,13 @@
+.player_cards_wrapper {
+    // width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid orange;
+    border-radius: 4px;
+
+    .photo {
+      flex: 1; // Każda karta zajmie równą część szerokości kontenera
+      max-width: 25%; // Maksymalna szerokość, aby zachować marginesy
+      // border: 1px solid blue;
+    }
+  }

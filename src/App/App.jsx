@@ -5,7 +5,7 @@ import MainGameScreen from "./components/MainGameScreen/MainGameScreen"
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/WIRUS_GRA">
       <div className={s.app_container}>
         <Routes>
           <Route path="/" element={<WelcomeScreen />} />

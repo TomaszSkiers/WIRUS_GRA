@@ -1,62 +1,35 @@
 .container {
-    width: 100%; /* Zapewnia pełną szerokość w danym zakresie */
-    min-width: 320px; /* Minimalna szerokość kontenera */
-    max-width: 1500px; /* Maksymalna szerokość kontenera */
-    margin: 0 auto; /* Wyśrodkowanie kontenera */
-    height: 100%;
-    font-family: "Sixtyfour Convergence", sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-image: url("/photos/welcome_screen_background.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    
-    h1 {
-      font-size: 3rem;
-      height: 50%;
-      display: flex;
-      align-items: flex-end;
-      color: red;
-      @media (orientation: landscape){
-        align-items: center;
-      }
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      height: 50%;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
+  width: 100%; /* Zapewnia pełną szerokość w danym zakresie */
+  min-width: 320px; /* Minimalna szerokość kontenera */
+  max-width: 1500px; /* Maksymalna szerokość kontenera */
+  margin: 0 auto; /* Wyśrodkowanie kontenera */
+  height: 100%;
+  font-family: "Sixtyfour Convergence", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url("/photos/welcome_screen_background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 
-      h2{
-        text-align: center;
-        line-height: 1.5;
-        font-size: 1.2rem;
-      }
-  
-      input {
-        width: 220px;
-        height: 50px;
-        font-family: "Roboto", sans-serif;
-        font-weight: bold;
-        padding: 10px 20px;
-        text-align: center;
-        letter-spacing: 3px;
-        opacity: 0.7;
-      }
-      button {
-        width: 220px;
-        // height: 50px;
-        font-family: "Roboto", sans-serif;
-        font-weight: bold;
-        padding: 10px 30px;
-        // font-size: 1.2rem;
-        letter-spacing: 5px;
-        opacity: 0.7;
-      }
+  h1 {
+    font-size: 3rem;
+    display: flex;
+    align-items: flex-end;
+    color: red;
+    @media (orientation: landscape) {
+      align-items: center;
     }
   }
-  
+
+  button {
+    width: 220px;
+    font-family: "Roboto", sans-serif;
+    font-weight: bold;
+    padding: 10px 30px;
+    letter-spacing: 5px;
+    opacity: 0.7;
+    margin-top: 50px;
+  }
+}

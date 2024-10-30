@@ -12,7 +12,7 @@ export async function updateActiveUser(id, isActive) {
     if(error) {
         console.log("błąd podczas ustawiania użytkownika na active", error)
     }else{
-        console.log(`player ${id} jest aktywnym graczem`)
+        // console.log(`player ${id} jest aktywnym graczem`)
         // console.log('dane zwrócone z bazy', data)
         return data
     }

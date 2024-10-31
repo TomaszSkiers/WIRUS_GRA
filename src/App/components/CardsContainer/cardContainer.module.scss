@@ -5,6 +5,10 @@
     border: 1px solid orange;
     border-radius: 4px;
 
+    h3{
+      color: white;
+    }
+
     .photo {
       flex: 1; // Każda karta zajmie równą część szerokości kontenera
       max-width: 25%; // Maksymalna szerokość, aby zachować marginesy

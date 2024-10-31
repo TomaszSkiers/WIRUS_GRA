@@ -19,7 +19,10 @@ export async function injectAppId(newAppId) {
       // Aktualizacja rekordu
       const { error: updateError } = await supabase
         .from("users")
-        .update({ app_id: newAppId })
+        .update({ 
+          app_id: newAppId,
+          time: `NOW()`
+        })
         .eq("id", firstNullRecord.id)
 
       if (updateError) {

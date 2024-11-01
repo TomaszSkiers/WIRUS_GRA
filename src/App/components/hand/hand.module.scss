@@ -1,13 +1,31 @@
 .hand_container {
   border: 1px solid blue;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
   .photo {
     flex: 1; // Każda karta zajmie równą część szerokości kontenera
     max-width: 25%; // Maksymalna szerokość, aby zachować marginesy
     // border: 1px solid blue;
     color: white;
     &:hover {
-      
       cursor: pointer;
+    }
+  }
+  button{
+    // flex: 1;
+    width: 70px;
+    height: 70px;
+    color: green;
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: 1px solid green;
+    border-radius: 50%;
+    &:active{
+      background-color: mediumaquamarine;
     }
   }
 }

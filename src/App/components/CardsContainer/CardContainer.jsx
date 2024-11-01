@@ -12,15 +12,17 @@ export default function CardContainer({
   const [selectedCard, setSelectedCard] = useState(null) // Przechowuje indeks klikniętej karty
 
   const handlePhotoClick = (index) => {
-    // Jeśli kliknięta karta jest już wybrana, odznacz ją
-    setClickProtection(color)
+    //zaznaczanie i odznaczanie klikniętej karty na stole
+    //oraz zaznaczanie i odznaczanie przy przejściu na inny stolik
+    setClickProtection(color) //przekazuję kolor stolika do Dashboard
     setSelectedCard((prevSelected) => (prevSelected === index ? null : index))
-    
+
+    //*
   }
 
   return (
     <div className={s.player_cards_wrapper}>
-      <h3>app_id_: {userId}</h3>
+      
       <div className={s.photos_wrapper} style={{ backgroundColor: color }}>
         {[user.k1, user.k2, user.k3, user.k4].map((card, index) => (
           <img
@@ -29,7 +31,10 @@ export default function CardContainer({
             src={`./photos/${card}.png`}
             onClick={() => handlePhotoClick(index)}
             style={{
-              backgroundColor: selectedCard === index && clickProtection === color ? "gray" : color // Zmieniamy kolor tła w zależności od wyboru
+              backgroundColor:
+                selectedCard === index && clickProtection === color
+                  ? "gray"
+                  : color // Zmieniamy kolor tła w zależności od wyboru
             }}
           />
         ))}

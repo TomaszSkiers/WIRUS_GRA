@@ -1,11 +1,48 @@
-.dashboard_container{
-    height: 100%;
-    width: 100%;
-    border: 1px solid red;
-    button{
-        padding: 10px 20px;
+.dashboard_container {
+  height: 100%;
+  width: 100%;
+  border: 1px solid red;
+  .top_buttons_container {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      // padding: 10px 20px;
+      width: 50px;
+      height: 50px;
+      color: green;
+      font-size: 1rem;
+      font-weight: bold;
     }
-    ul{
-        color: white;
+    .wait{
+        display: flex;
+        width: 50px;
+        height: 50px;
+        color: magenta;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
     }
+    .table_color_container{
+        padding: 5px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        h3, h2{
+            color: white;
+            font-weight: bold;
+        }
+    }
+  }
+  .info{
+    border: 1px solid orange;
+    display: flex;
+    flex-direction: column;
+    color: lime;
+    padding: 10px;
+    .instruction{
+      color: magenta;
+    }
+  }
 }

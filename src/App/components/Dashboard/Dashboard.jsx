@@ -8,6 +8,13 @@ import supabase from "../../supabase/supabase"
 import Tables from "../tables/tables"
 import { injectNewTime } from "../../supabase/injectNewTime"
 import Hand from "../hand/hand"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faCheck,
+  faCircleXmark,
+  faHourglassHalf,
+  faRightToBracket
+} from "@fortawesome/free-solid-svg-icons"
 
 // import { useNavigationWarning } from "../../functions/useNavigationWarning"
 
@@ -20,14 +27,18 @@ export default function Dashboard() {
   const [locYourTurn, setLocYourTurn] = useState(false)
   const [quarterback, setQuarterback] = useState(false) //*dodano do testów
   const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
-  const [tableCard, setTableCard] = useState(false) //karta wybrana z ręki
+  const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
   const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
+  const [myTableColor, setMyTableColor] = useState(false)
+  const [info, setInfo] = useState({action: '', instruction: ''})//informacje dla użytkownika do kontenera .info
+  
   const navigate = useNavigate()
 
   useEffect(() => {
     console.log(handCard)
     console.log(clickProtection)
-  }, [handCard, clickProtection])
+    console.log(myTableColor)
+  }, [handCard, clickProtection, myTableColor])
 
   useEffect(() => {
     // przekierowanie po przeładowaniu strony
@@ -63,6 +74,7 @@ export default function Dashboard() {
             if (!locId) {
               // to muszę zapisać tylko raz później zablokować
               localStorage.setItem("userData", payload.new.id)
+              setMyTableColor(payload.new.table)
               setLocId(true)
             }
             if (!locFetAcUsers) {
@@ -115,6 +127,8 @@ export default function Dashboard() {
       )
       .subscribe()
 
+      setInfo(prv => ({...prv, action: 'naciśnij zieloną strzałkę w lewym górnym rogu ekranu' }))
+
     return () => {
       subscription.unsubscribe()
     }
@@ -123,6 +137,7 @@ export default function Dashboard() {
   const joinTheGame = () => {
     setSwitchButtons(true)
     injectAppId(appId)
+    setInfo(prv => ({...prv, action: 'zostałeś zalogowany do bazy danych, jeżeli conajmniej dwa kolorowe stoliki są widoczne możesz zacząć grę, jeżeli nie to poczekaj na resztę graczy, na dole wylosowano trzy karty'}))
   }
   const endTheGame = () => {
     setSwitchButtons(false)
@@ -141,10 +156,12 @@ export default function Dashboard() {
 
     if (usersSortedByTime[0]?.app_id === appId) {
       setLocYourTurn(true)
+      setInfo(prv => ({...prv, instruction: 'twoja kolej połóż karty i zatwierdź znaczkiem haczyka w prawym górnym rogu'}))
     } else {
       setLocYourTurn(false)
+      setInfo(prv => ({...prv, instruction: ''}))
     }
-    setQuarterback(usersSortedByTime[0])
+    setQuarterback(usersSortedByTime[0]) //który stolik rozgrywa
   }, [users])
 
   const handleEndTurn = () => {
@@ -153,22 +170,33 @@ export default function Dashboard() {
 
   return (
     <div className={s.dashboard_container}>
-      {!switchButtons ? (
-        <button onClick={joinTheGame}>DOŁĄCZ DO GRACZY</button>
-      ) : (
-        <button onClick={endTheGame}>WYJDŹ Z GRY</button>
-      )}
+      <div className={s.top_buttons_container}>
+        {!switchButtons ? (
+          <button onClick={joinTheGame}>
+            <FontAwesomeIcon icon={faRightToBracket} />
+          </button>
+        ) : (
+          <button onClick={endTheGame}>
+            <FontAwesomeIcon icon={faCircleXmark} />
+          </button>
+        )}
+        <div className={s.table_color_container} style={{border: `1px solid ${myTableColor}`}}>
+          <h3>twój stolik to</h3>
+          <h2 style={{color: myTableColor}}>{myTableColor}</h2>
+        </div>
+        
 
-      {!locYourTurn ? (
-        <span style={{ color: "red" }}>CZEKAJ NA RUCH</span>
-      ) : (
-        <button onClick={handleEndTurn}>ZAKOŃCZ TURĘ</button> //todo tu przekazać rozgrywającego tu ustawiam czas i wysyłam do bazy zobaczymy jak się posortuje i jak zadziała
-      )}
+        {!locYourTurn ? (
+          <span className={s.wait}><FontAwesomeIcon icon={faHourglassHalf} /></span>
+        ) : (
+          <button onClick={handleEndTurn}><FontAwesomeIcon icon={faCheck} /></button> //todo tu przekazać rozgrywającego tu ustawiam czas i wysyłam do bazy zobaczymy jak się posortuje i jak zadziała
+        )}
+      </div>
 
-      <h3 style={{ color: "white" }}>
-        {quarterback?.app_id} rozgrywający to {quarterback?.table}{" "}
-        {/*dodano do testów*/}
-      </h3>
+     <div className={s.info}>
+      <p>{info.action}</p>
+      <p className={s.instruction}>{info.instruction}</p>
+     </div>
 
       <Tables
         users={users}
@@ -176,7 +204,7 @@ export default function Dashboard() {
         setClickProtection={setClickProtection}
         clickProtection={clickProtection}
       />
-      <Hand setHandCard={setHandCard} appId={appId} />
+      {switchButtons ? <Hand setHandCard={setHandCard} appId={appId} /> : null}
     </div>
   )
 }

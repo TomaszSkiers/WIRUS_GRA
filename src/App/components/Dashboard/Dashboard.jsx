@@ -7,6 +7,7 @@ import { injectAppId } from "../../supabase/injectAppId"
 import supabase from "../../supabase/supabase"
 import Tables from "../tables/tables"
 import { injectNewTime } from "../../supabase/injectNewTime"
+import Hand from "../hand/hand"
 
 // import { useNavigationWarning } from "../../functions/useNavigationWarning"
 
@@ -18,7 +19,15 @@ export default function Dashboard() {
   const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
   const [locYourTurn, setLocYourTurn] = useState(false)
   const [quarterback, setQuarterback] = useState(false) //*dodano do testów
+  const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
+  const [tableCard, setTableCard] = useState(false) //karta wybrana z ręki
+  const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
   const navigate = useNavigate()
+
+  useEffect(() => {
+    console.log(handCard)
+    console.log(clickProtection)
+  }, [handCard, clickProtection])
 
   useEffect(() => {
     // przekierowanie po przeładowaniu strony
@@ -56,14 +65,16 @@ export default function Dashboard() {
               localStorage.setItem("userData", payload.new.id)
               setLocId(true)
             }
-            if (!locFetAcUsers) {//* tu mogę sprawdzić czy users.lenght === 1
+            if (!locFetAcUsers) {
+              //* tu mogę sprawdzić czy users.lenght === 1
               // jak dołączam do gry pobieram wszystkich userów później będę na bieżąco aktualizował stan
               await fetchActiveUsers()
               setlocFetAcUsers(true) //wyłączm ponowne pobieranie wszystkich graczy muszę to zrobić tylko na początku później oszczędzam zapytania do bazy danych
-            } else {//* to dopiero sie wykona po aktualizacji  
+            } else {
+              //* to dopiero sie wykona po wciśnięciu dołącz do gry jak zostaną pobrani wszyscy gracze (wszyscy gracze są pobierani tylko raz na początku)
               setUsers(
                 (
-                  prv //todo jak wlecą wiadomości odemnie to mój stan też trzeba zaktualizować -> czas
+                  prv // jak wlecą wiadomości odemnie to mój stan też trzeba zaktualizować
                 ) =>
                   prv.map(
                     (
@@ -74,11 +85,11 @@ export default function Dashboard() {
                         : user
                   )
               )
-            } //todo --- > testujemy na przykładzie czasu --> time w bazie danych
+            }
           } else {
             // tutaj filtrowanie obcych id
             // jak wleci obce id aktualizuję sobie stan gry/ userów
-            // todo tu wleci mój aktualy stan z kartami i czasem ja jestem najpóźniej w stanie gry więc aktywny jest teraz najwcześniejszy user
+            // tu wleci mój aktualy stan z kartami i czasem ja jestem najpóźniej w stanie gry więc aktywny jest teraz najwcześniejszy user
             setUsers((prv) => {
               // aktualizacja stanu users (stanu gry)
               const index = prv.findIndex((user) => user.id === payload.new.id)
@@ -105,7 +116,7 @@ export default function Dashboard() {
       .subscribe()
 
     return () => {
-      subscription.unsubscribe() //usunięcie subskrypcji
+      subscription.unsubscribe()
     }
   }, [])
 
@@ -119,24 +130,25 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    //todo sortowanie po czasie
+    // sortowanie po czasie
     const usersSortedByTime = [...users].sort(
       (a, b) => new Date(a.time) - new Date(b.time)
     )
-    console.log(usersSortedByTime)
+    //* wyświetlam do testów
+    // console.log(usersSortedByTime)
 
     //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
 
-    if (usersSortedByTime[0]?.app_id === appId) { //todo <<<
+    if (usersSortedByTime[0]?.app_id === appId) {
       setLocYourTurn(true)
-    }else{
-      setLocYourTurn(false) //todo <<<<
+    } else {
+      setLocYourTurn(false)
     }
     setQuarterback(usersSortedByTime[0])
-  }, [users]) //todo  << testowanie
+  }, [users])
 
   const handleEndTurn = () => {
-    injectNewTime(appId)  //todo <<<--
+    injectNewTime(appId)
   }
 
   return (
@@ -158,7 +170,13 @@ export default function Dashboard() {
         {/*dodano do testów*/}
       </h3>
 
-      <Tables users={users} />
+      <Tables
+        users={users}
+        setTableCard={setTableCard}
+        setClickProtection={setClickProtection}
+        clickProtection={clickProtection}
+      />
+      <Hand setHandCard={setHandCard} appId={appId} />
     </div>
   )
 }

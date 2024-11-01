@@ -13,5 +13,9 @@
       flex: 1; // Każda karta zajmie równą część szerokości kontenera
       max-width: 25%; // Maksymalna szerokość, aby zachować marginesy
       // border: 1px solid blue;
+      &:hover{
+        
+        cursor: pointer;
+      }
     }
   }

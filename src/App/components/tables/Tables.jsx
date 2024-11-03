@@ -2,7 +2,7 @@
 import CardContainer from "../CardsContainer/CardContainer"
 import s from "./tables.module.scss"
 
-export default function Tables({ users, setClickProtection, clickProtection }) {
+export default function Tables({ users, setClickProtection, clickProtection, lockYourTurn,setTableCard }) {
   return (
     <div className={s.tables_container}>
       {users.length > 0 ? (
@@ -14,6 +14,8 @@ export default function Tables({ users, setClickProtection, clickProtection }) {
             color={user.table}
             setClickProtection={setClickProtection}
             clickProtection={clickProtection}
+            lockYourTurn={lockYourTurn}
+            setTableCard={setTableCard}
           />
         ))
       ) : (

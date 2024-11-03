@@ -13,3 +13,10 @@ export async function injectNewTime(id) {
         // 
     }
 }
+//wstawiam do bazy danych informację o czasie zakończenia tury później za pomocą filtrowania usta
+//lam czyja jest reraz tura gry
+
+//* tu za chwilkę stawiam nową kartę i nie muszę aktualizować stanu bo on się sam zaktualizuje w
+//* w subskrypcji 
+//* czyli uruchamiam funkcję do sprawdzenia tych dwóch stanów handCard i tableCard i aktualizuję
+//* pole w bazie danych i to co przyleci zaktualizuje stany u wszystkich

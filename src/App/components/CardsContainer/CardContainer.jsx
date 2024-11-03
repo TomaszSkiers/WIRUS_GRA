@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import s from "./cardContainer.module.scss"
 
 export default function CardContainer({
@@ -7,18 +7,30 @@ export default function CardContainer({
   userId,
   color,
   setClickProtection,
-  clickProtection
+  clickProtection,
+  lockYourTurn,
+  setTableCard,
 }) {
   const [selectedCard, setSelectedCard] = useState(null) // Przechowuje indeks klikniętej karty
 
   const handlePhotoClick = (index) => {
+    // blokowanie onClicka jeśli nie moja tura
+    if (!lockYourTurn) return
+
+    setTableCard([user.id, index, user[`k${index + 1}`] ]) //index, która kliknięta
+    
     //zaznaczanie i odznaczanie klikniętej karty na stole
     //oraz zaznaczanie i odznaczanie przy przejściu na inny stolik
     setClickProtection(color) //przekazuję kolor stolika do Dashboard
     setSelectedCard((prevSelected) => (prevSelected === index ? null : index))
-
-    //*
+    // jak klikniesz to wpisz null żeby odznaczyć 
+    
   }
+
+  useEffect(()=> {
+    //*odznaczam wszystkie karty
+    setSelectedCard(null)
+  },[lockYourTurn])
 
   return (
     <div className={s.player_cards_wrapper}>
@@ -29,10 +41,10 @@ export default function CardContainer({
             key={index}
             className={s.photo}
             src={`./photos/${card}.png`}
-            onClick={() => handlePhotoClick(index)}
+            onClick={() => handlePhotoClick(index)} //przekazuję dla każdej funkcji inny parametr
             style={{
               backgroundColor:
-                selectedCard === index && clickProtection === color
+                selectedCard === index && clickProtection === color 
                   ? "gray"
                   : color // Zmieniamy kolor tła w zależności od wyboru
             }}
@@ -42,3 +54,5 @@ export default function CardContainer({
     </div>
   )
 }
+//todo dorobić blokowanie kliknięcia, tu muszę ogarnąć dwie rzeczy 
+//todo instrukcję warunkową w stylw i handePhotoClick

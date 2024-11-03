@@ -1,16 +1,20 @@
+/* eslint-disable react/prop-types */
 import s from "./hand.module.scss"
 import cards from "../../functions/cards"
 import getRandomCards from "../../functions/getRandomCards"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRotate } from "@fortawesome/free-solid-svg-icons"
 
-export default function Hand({ setHandCard }) {
+export default function Hand({ setHandCard, setInfo, locYourTurn }) {
   const [randomCards, setRandomCards] = useState(getRandomCards(cards, 3))
   const [selectedCards, setSelectedCards] = useState([])
+  const [lockRerol, setLockRerol] = useState(false)
 
+  //todo tutaj skończyłem chcę uniemożliwic zaznaczanie kart jeśli nie twoja tura
   const handlePhotoClick = (cardNumber, cardName, index) => {
-    setHandCard([cardNumber, cardName])//todo tu blokada tylko na jedną kartę
+    if (lockRerol) return
+    setHandCard([cardNumber, cardName]) //todo tu blokada tylko na jedną kartę
     setSelectedCards((prevSelected) =>
       prevSelected.includes(index)
         ? prevSelected.filter((i) => i !== index)
@@ -19,14 +23,35 @@ export default function Hand({ setHandCard }) {
         : [...prevSelected.slice(1), index]
     )
   }
+  useEffect(() => {
+    //jak przyjdzie moja kolej to odblokowuję możliwość wymiany kart jak nie moja kolej to nie
+    if(!locYourTurn){
+      setLockRerol(true)
+      setSelectedCards([])
+    }else{
+      setLockRerol(false)
+      
+    }
+  }, [locYourTurn])
 
   const rerollSelectedCards = () => {
-    setRandomCards((prevCards) =>
-      prevCards.map((card, index) =>
-        selectedCards.includes(index) ? getRandomCards(cards, 1)[0] : card
+    if (!lockRerol) {
+      setRandomCards((prevCards) =>
+        prevCards.map((card, index) =>
+          selectedCards.includes(index) ? getRandomCards(cards, 1)[0] : card
+        )
       )
-    )
-    setSelectedCards([])
+      setSelectedCards([])
+      setLockRerol(true) //zablokuj ponowne losowanie
+      setInfo((prv) => ({ ...prv, action: "wymieniłeś karty, zakończ turę" }))
+    } else {
+      //informacja że można wymienić karty tylko raz
+      setSelectedCards([]) // odznacz karty
+      setInfo((prv) => ({
+        ...prv,
+        instruction: "możesz wymienić karty tylko raz"
+      }))
+    }
   }
 
   return (
@@ -44,7 +69,7 @@ export default function Hand({ setHandCard }) {
         />
       ))}
       <button onClick={rerollSelectedCards}>
-        <FontAwesomeIcon icon={faRotate} /> 
+        <FontAwesomeIcon icon={faRotate} />
       </button>
     </div>
   )

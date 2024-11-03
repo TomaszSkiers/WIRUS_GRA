@@ -36,6 +36,8 @@
     }
   }
   .info{
+    height: 100px;
+    overflow-y: auto;
     border: 1px solid orange;
     display: flex;
     flex-direction: column;

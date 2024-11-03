@@ -29,16 +29,30 @@ export default function Dashboard() {
   const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
   const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
   const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
-  const [myTableColor, setMyTableColor] = useState(false)
-  const [info, setInfo] = useState({action: '', instruction: ''})//informacje dla użytkownika do kontenera .info
-  
+  const [myTableColor, setMyTableColor] = useState(false) //używam gdy zaznaczam aktywną kartę przy zmianie stolików
+  const [info, setInfo] = useState({ action: "", instruction: "" }) //informacje dla użytkownika do kontenera .info
+
   const navigate = useNavigate()
 
-  useEffect(() => {
+  useEffect(() => {// todo <<<<---------------------------start 
+    // todo zaczęło działać robię commit i trzeba dopieśćić -> wyswietlanie jest teraz wysyłka
+    // * tu muszę zaktualizować stan żeby zwizualizować efekt wybierania karty 
+    //*ten useEffect do testów
     console.log(handCard)
-    console.log(clickProtection)
-    console.log(myTableColor)
-  }, [handCard, clickProtection, myTableColor])
+    console.log(users)
+    console.log(tableCard[0])
+
+    //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
+    //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
+    setUsers((prv) =>
+      prv.map((user) =>
+        user.id === tableCard[0]  //jak znajdziesz moj stan kart to 
+          ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard 
+          : user
+      )
+    )
+    console.log(users)
+  }, [tableCard])// todo << ----------------end 
 
   useEffect(() => {
     // przekierowanie po przeładowaniu strony
@@ -127,7 +141,10 @@ export default function Dashboard() {
       )
       .subscribe()
 
-      setInfo(prv => ({...prv, action: 'naciśnij zieloną strzałkę w lewym górnym rogu ekranu' }))
+    setInfo((prv) => ({
+      ...prv,
+      action: "naciśnij zieloną strzałkę w lewym górnym rogu ekranu"
+    }))
 
     return () => {
       subscription.unsubscribe()
@@ -137,7 +154,11 @@ export default function Dashboard() {
   const joinTheGame = () => {
     setSwitchButtons(true)
     injectAppId(appId)
-    setInfo(prv => ({...prv, action: 'zostałeś zalogowany do bazy danych, jeżeli conajmniej dwa kolorowe stoliki są widoczne możesz zacząć grę, jeżeli nie to poczekaj na resztę graczy, na dole wylosowano trzy karty'}))
+    setInfo((prv) => ({
+      ...prv,
+      action:
+        "zostałeś zalogowany do bazy danych, jeżeli conajmniej dwa kolorowe stoliki są widoczne możesz zacząć grę, jeżeli nie to poczekaj na resztę graczy, na dole wylosowano trzy karty"
+    }))
   }
   const endTheGame = () => {
     setSwitchButtons(false)
@@ -156,16 +177,25 @@ export default function Dashboard() {
 
     if (usersSortedByTime[0]?.app_id === appId) {
       setLocYourTurn(true)
-      setInfo(prv => ({...prv, instruction: 'twoja kolej połóż karty i zatwierdź znaczkiem haczyka w prawym górnym rogu'}))
+      setInfo((prv) => ({
+        ...prv,
+        instruction:
+          "twoja kolej połóż karty i zatwierdź znaczkiem haczyka w prawym górnym rogu",
+        action: ""
+      }))
     } else {
       setLocYourTurn(false)
-      setInfo(prv => ({...prv, instruction: ''}))
+      setInfo((prv) => ({
+        ...prv,
+        instruction: "ekran zablokowany do kiedy będzie twoja kolej"
+      }))
     }
     setQuarterback(usersSortedByTime[0]) //który stolik rozgrywa
   }, [users])
 
   const handleEndTurn = () => {
     injectNewTime(appId)
+    setInfo((prv) => ({ ...prv, action: "karty wysłane" }))
   }
 
   return (
@@ -180,31 +210,46 @@ export default function Dashboard() {
             <FontAwesomeIcon icon={faCircleXmark} />
           </button>
         )}
-        <div className={s.table_color_container} style={{border: `1px solid ${myTableColor}`}}>
+        <div
+          className={s.table_color_container}
+          style={{ border: `1px solid ${myTableColor}` }}
+        >
           <h3>twój stolik to</h3>
-          <h2 style={{color: myTableColor}}>{myTableColor}</h2>
+          <h2 style={{ color: myTableColor }}>{myTableColor}</h2>
         </div>
-        
 
         {!locYourTurn ? (
-          <span className={s.wait}><FontAwesomeIcon icon={faHourglassHalf} /></span>
+          <span className={s.wait}>
+            <FontAwesomeIcon icon={faHourglassHalf} />
+          </span>
         ) : (
-          <button onClick={handleEndTurn}><FontAwesomeIcon icon={faCheck} /></button> //todo tu przekazać rozgrywającego tu ustawiam czas i wysyłam do bazy zobaczymy jak się posortuje i jak zadziała
+          <button onClick={handleEndTurn}>
+            <FontAwesomeIcon icon={faCheck} />
+          </button> //todo tu przekazać rozgrywającego tu ustawiam czas i wysyłam do bazy zobaczymy jak się posortuje i jak zadziała
         )}
       </div>
 
-     <div className={s.info}>
-      <p>{info.action}</p>
-      <p className={s.instruction}>{info.instruction}</p>
-     </div>
+      <div className={s.info}>
+        <p>{info.action}</p>
+        <p className={s.instruction}>{info.instruction}</p>
+      </div>
 
       <Tables
         users={users}
         setTableCard={setTableCard}
         setClickProtection={setClickProtection}
         clickProtection={clickProtection}
+        setInfo={setInfo}
+        lockYourTurn={locYourTurn} //tu literówka trzeba uważać!1
       />
-      {switchButtons ? <Hand setHandCard={setHandCard} appId={appId} /> : null}
+      {switchButtons ? (
+        <Hand
+          setHandCard={setHandCard}
+          appId={appId}
+          setInfo={setInfo}
+          locYourTurn={locYourTurn}
+        />
+      ) : null}
     </div>
   )
 }

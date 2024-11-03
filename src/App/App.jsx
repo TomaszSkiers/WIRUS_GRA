@@ -2,6 +2,7 @@ import s from "./app.module.scss"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import WelcomeScreen from "./components/WelcomeScreen/WelcomeScreen"
 import Dashboard from "./components/Dashboard/Dashboard"
+
 // import MainGameScreen from "./components/MainGameScreen/MainGameScreen"
 
 export default function App() {

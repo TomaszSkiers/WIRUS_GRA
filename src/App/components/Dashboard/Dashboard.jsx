@@ -24,35 +24,66 @@ export default function Dashboard() {
   const [users, setUsers] = useState([])
   const [locId, setLocId] = useState(false) //blokuje ponowne zapisywanie Id do localStorage
   const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
-  const [locYourTurn, setLocYourTurn] = useState(false)
+  const [locYourTurn, setLocYourTurn] = useState(false) //blokuje możliwość gry
   const [quarterback, setQuarterback] = useState(false) //*dodano do testów
   const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
   const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
   const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
   const [myTableColor, setMyTableColor] = useState(false) //używam gdy zaznaczam aktywną kartę przy zmianie stolików
   const [info, setInfo] = useState({ action: "", instruction: "" }) //informacje dla użytkownika do kontenera .info
+  const [handWithCards, setHandWithCards] = useState([
+    "empty-card",
+    "empty-card",
+    "empty-card"
+  ])
+  const [tableBlocker, setTableBlocker] = useState(false)
 
   const navigate = useNavigate()
 
-  useEffect(() => {// todo <<<<---------------------------start 
+  useEffect(() => {
+    // todo <<<<---------------------------start
     // todo zaczęło działać robię commit i trzeba dopieśćić -> wyswietlanie jest teraz wysyłka
-    // * tu muszę zaktualizować stan żeby zwizualizować efekt wybierania karty 
+    // * tu muszę zaktualizować stan żeby zwizualizować efekt wybierania karty
     //*ten useEffect do testów
     console.log(handCard)
     console.log(users)
     console.log(tableCard[0])
+    console.log(locYourTurn)
 
-    //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
-    //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
-    setUsers((prv) =>
-      prv.map((user) =>
-        user.id === tableCard[0]  //jak znajdziesz moj stan kart to 
-          ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard 
-          : user
+    //sprawdzam czy wybrano organ ,który ma być położony
+    if (!handCard) {
+      setInfo((prv) => ({
+        ...prv,
+        instruction: "wybierz najpierw organ, który chcesz położyć"
+      }))
+      // można dodać jakiś dźwięk niepowodzenia
+      return
+    }
+
+    if (handCard !== false && tableCard !== false) {
+      //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
+      //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
+      setUsers((prv) =>
+        prv.map((user) =>
+          user.id === tableCard[0] //jak znajdziesz moj stan kart to
+            ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard
+            : user
+        )
       )
-    )
-    console.log(users)
-  }, [tableCard])// todo << ----------------end 
+      console.log(users)
+
+      const index = handCard[0] //pobieram index klikniętej karty
+      //zmieniam kartę w ręku na pustą dla wizualizacji
+      setHandWithCards((prv) => {
+        const copy = [...prv]
+        copy[index - 1] = "empty-card"
+        return copy
+      })
+
+      //blokuję możliwość klikania w karty
+      setTableBlocker(true)
+    }
+  }, [tableCard]) // todo << ----------------end
 
   useEffect(() => {
     // przekierowanie po przeładowaniu strony
@@ -194,7 +225,14 @@ export default function Dashboard() {
   }, [users])
 
   const handleEndTurn = () => {
-    injectNewTime(appId)
+    //todo
+    const index = users.findIndex((user) => user.app_id === appId)
+    const card = users[index][`k${handCard[0]}`]
+    console.log(card)
+
+    console.log(`k${handCard[0]}`)
+
+    injectNewTime(appId, `k${handCard[0]}`, card)
     setInfo((prv) => ({ ...prv, action: "karty wysłane" }))
   }
 
@@ -241,6 +279,7 @@ export default function Dashboard() {
         clickProtection={clickProtection}
         setInfo={setInfo}
         lockYourTurn={locYourTurn} //tu literówka trzeba uważać!1
+        tableBlocker={tableBlocker}
       />
       {switchButtons ? (
         <Hand
@@ -248,6 +287,8 @@ export default function Dashboard() {
           appId={appId}
           setInfo={setInfo}
           locYourTurn={locYourTurn}
+          handWithCards={handWithCards}
+          setHandWithCards={setHandWithCards}
         />
       ) : null}
     </div>

@@ -6,15 +6,21 @@ import { useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRotate } from "@fortawesome/free-solid-svg-icons"
 
-export default function Hand({ setHandCard, setInfo, locYourTurn }) {
+export default function Hand({
+  setHandCard,
+  setInfo,
+  locYourTurn,
+  handWithCards,
+  setHandWithCards,
+}) {
   const [randomCards, setRandomCards] = useState(getRandomCards(cards, 3))
   const [selectedCards, setSelectedCards] = useState([])
   const [lockRerol, setLockRerol] = useState(false)
 
   //todo tutaj skończyłem chcę uniemożliwic zaznaczanie kart jeśli nie twoja tura
   const handlePhotoClick = (cardNumber, cardName, index) => {
-    if (lockRerol) return
-    setHandCard([cardNumber, cardName]) //todo tu blokada tylko na jedną kartę
+    if (lockRerol) return // zablokowanie ponownego losowania
+    setHandCard([cardNumber, cardName]) //todo tu blokada tylko na jedną kartę ???
     setSelectedCards((prevSelected) =>
       prevSelected.includes(index)
         ? prevSelected.filter((i) => i !== index)
@@ -25,14 +31,18 @@ export default function Hand({ setHandCard, setInfo, locYourTurn }) {
   }
   useEffect(() => {
     //jak przyjdzie moja kolej to odblokowuję możliwość wymiany kart jak nie moja kolej to nie
-    if(!locYourTurn){
+    if (!locYourTurn) {
       setLockRerol(true)
       setSelectedCards([])
-    }else{
+    } else {
       setLockRerol(false)
-      
     }
   }, [locYourTurn])
+
+  useEffect(()=>{
+    setHandWithCards(randomCards)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[randomCards])
 
   const rerollSelectedCards = () => {
     if (!lockRerol) {
@@ -56,7 +66,7 @@ export default function Hand({ setHandCard, setInfo, locYourTurn }) {
 
   return (
     <div className={s.hand_container}>
-      {randomCards.map((card, index) => (
+      {handWithCards.map((card, index) => (
         <img
           key={index}
           className={s.photo}

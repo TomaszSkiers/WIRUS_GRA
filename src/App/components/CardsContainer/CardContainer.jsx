@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react"
 import s from "./cardContainer.module.scss"
@@ -10,12 +11,17 @@ export default function CardContainer({
   clickProtection,
   lockYourTurn,
   setTableCard,
+  tableBlocker,
 }) {
   const [selectedCard, setSelectedCard] = useState(null) // Przechowuje indeks klikniętej karty
+  const [lockClikc, setLocClic] = useState(false) //blokuje ponowne kliknięcia po ustawieniu organu
 
   const handlePhotoClick = (index) => {
+    //klikać nie wolno jak położono kartę 
+    if(tableBlocker) return
+
     // blokowanie onClicka jeśli nie moja tura
-    if (!lockYourTurn) return
+    if (!lockYourTurn ) return
 
     setTableCard([user.id, index, user[`k${index + 1}`] ]) //index, która kliknięta
     
@@ -24,6 +30,7 @@ export default function CardContainer({
     setClickProtection(color) //przekazuję kolor stolika do Dashboard
     setSelectedCard((prevSelected) => (prevSelected === index ? null : index))
     // jak klikniesz to wpisz null żeby odznaczyć 
+    
     
   }
 

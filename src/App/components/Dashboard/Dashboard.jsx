@@ -15,6 +15,7 @@ import {
   faHourglassHalf,
   faRightToBracket
 } from "@fortawesome/free-solid-svg-icons"
+import { updateCards } from "../../supabase/updateCards"
 
 // import { useNavigationWarning } from "../../functions/useNavigationWarning"
 
@@ -45,10 +46,10 @@ export default function Dashboard() {
     // todo zaczęło działać robię commit i trzeba dopieśćić -> wyswietlanie jest teraz wysyłka
     // * tu muszę zaktualizować stan żeby zwizualizować efekt wybierania karty
     //*ten useEffect do testów
-    console.log(handCard)
-    console.log(users)
-    console.log(tableCard[0])
-    console.log(locYourTurn)
+    // console.log(handCard)
+    // console.log(users)
+    // console.log(tableCard, '<<<<<< tutaj')
+    // console.log(locYourTurn)
 
     //sprawdzam czy wybrano organ ,który ma być położony
     if (!handCard) {
@@ -70,7 +71,6 @@ export default function Dashboard() {
             : user
         )
       )
-      console.log(users)
 
       const index = handCard[0] //pobieram index klikniętej karty
       //zmieniam kartę w ręku na pustą dla wizualizacji
@@ -112,6 +112,7 @@ export default function Dashboard() {
         { event: "update", schema: "public", table: "users" },
         async (payload) => {
           console.log("ładunek z bazy danych", payload.new)
+          setTableBlocker(false) //wyłączam blokowanie kliknięć na stoliku
 
           if (payload.new.app_id === appId) {
             //zakładan filtr tylko na moje wiadomości
@@ -203,6 +204,7 @@ export default function Dashboard() {
     )
     //* wyświetlam do testów
     // console.log(usersSortedByTime)
+    // console.log(users, 'wyświetlam stan users po aktualizacji')
 
     //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
 
@@ -224,16 +226,33 @@ export default function Dashboard() {
     setQuarterback(usersSortedByTime[0]) //który stolik rozgrywa
   }, [users])
 
-  const handleEndTurn = () => {
-    //todo
-    const index = users.findIndex((user) => user.app_id === appId)
-    const card = users[index][`k${handCard[0]}`]
-    console.log(card)
+  const handleEndTurn = async () => {
+    //todo muszę wyczyścić kartę w ręku
+    // console.log('id plikacji',appId)
+    // console.log('zmienna users',users)
+    console.log("zmienna table card", tableCard)
+    // const index = users.findIndex((user) => user.app_id === appId)
+    // console.log('pobieram index usera', index)
+    // const card = users[index][`k${tableCard[1] + 1}`] //todo tutaj nie index z hand tylko z table!!! w stanie indeksujesz po table
+    // console.log(card)
 
-    console.log(`k${handCard[0]}`)
+    // console.log(`k${tableCard[1] + 1}`)
 
-    injectNewTime(appId, `k${handCard[0]}`, card)
+    // todo tu muszę wziąć tylko id z tableCard a resztę to ze stanu !!!
+    const index = users.findIndex((user) => user.id === tableCard[0])
+    if (tableCard) {
+      //wysłanie kart tylko jak karta została wybrana
+      const card = users[index][`k${tableCard[1] + 1}`] //to jest karta
+      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card) // todo zawsze idzie pod moje Id a jak zaznaczę inny stolik??
+    }
+
+    //tu muszę najpierw zaktualizować w bazie dane dla stolika a później przesłać czas żeby wymusić kolejność
+    await injectNewTime(appId)
+
     setInfo((prv) => ({ ...prv, action: "karty wysłane" }))
+
+    //czyszczę hancCard
+    setHandCard(false)
   }
 
   return (
@@ -289,6 +308,7 @@ export default function Dashboard() {
           locYourTurn={locYourTurn}
           handWithCards={handWithCards}
           setHandWithCards={setHandWithCards}
+          setTableBlocker={setTableBlocker}
         />
       ) : null}
     </div>

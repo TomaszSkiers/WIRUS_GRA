@@ -1,11 +1,11 @@
 import supabase from "./supabase";
 
-export async function injectNewTime(id, card, cardValue) {
+export async function injectNewTime(id) {
     const { error } = await supabase
     .from('users')
     .update({
         time: `NOW()`,
-        [card]: cardValue,
+        
     })
     .eq('app_id', id)
     

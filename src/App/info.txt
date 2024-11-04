@@ -42,3 +42,6 @@ url https://pjgojihznuoxpwjbckun.supabase.co
 //zrobić testową główną stronę gry 
 
 //jak ogarnąć zmianę rozgrywającego jak kończę grę jak pozmieniać kolejności
+
+//ogarnąć sytuację gdy są zaznaczone np trzy organy trzeba zablokować i poinformować że albo wymieniasz 
+albo zaznacz jeden organ

@@ -12,15 +12,16 @@ export default function Hand({
   locYourTurn,
   handWithCards,
   setHandWithCards,
+  setTableBlocker,
 }) {
   const [randomCards, setRandomCards] = useState(getRandomCards(cards, 3))
   const [selectedCards, setSelectedCards] = useState([])
   const [lockRerol, setLockRerol] = useState(false)
 
-  //todo tutaj skończyłem chcę uniemożliwic zaznaczanie kart jeśli nie twoja tura
+
   const handlePhotoClick = (cardNumber, cardName, index) => {
     if (lockRerol) return // zablokowanie ponownego losowania
-    setHandCard([cardNumber, cardName]) //todo tu blokada tylko na jedną kartę ???
+    setHandCard([cardNumber, cardName]) //todo ??
     setSelectedCards((prevSelected) =>
       prevSelected.includes(index)
         ? prevSelected.filter((i) => i !== index)
@@ -28,6 +29,7 @@ export default function Hand({
         ? [...prevSelected, index]
         : [...prevSelected.slice(1), index]
     )
+    setInfo(prv => ({...prv, action: 'wybrałeś organ', instruction: ''}))
   }
   useEffect(() => {
     //jak przyjdzie moja kolej to odblokowuję możliwość wymiany kart jak nie moja kolej to nie
@@ -45,6 +47,7 @@ export default function Hand({
   },[randomCards])
 
   const rerollSelectedCards = () => {
+
     if (!lockRerol) {
       setRandomCards((prevCards) =>
         prevCards.map((card, index) =>
@@ -62,6 +65,9 @@ export default function Hand({
         instruction: "możesz wymienić karty tylko raz"
       }))
     }
+
+    //blokuję klikanie na stołach
+    setTableBlocker(true)
   }
 
   return (

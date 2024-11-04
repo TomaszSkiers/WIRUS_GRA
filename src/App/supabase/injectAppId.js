@@ -21,7 +21,11 @@ export async function injectAppId(newAppId) {
         .from("users")
         .update({ 
           app_id: newAppId,
-          time: `NOW()`
+          time: `NOW()`,
+          k1: 'empty-card',
+          k2: 'empty-card',
+          k3: 'empty-card',
+          k4: 'empty-card',
         })
         .eq("id", firstNullRecord.id)
 

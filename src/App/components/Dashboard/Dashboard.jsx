@@ -238,23 +238,23 @@ export default function Dashboard() {
   }, [users])
 
   const handleEndTurn = async () => {
-    //todo muszę wyczyścić kartę w ręku
+    
     // console.log('id plikacji',appId)
     // console.log('zmienna users',users)
     console.log("zmienna table card", tableCard)
     // const index = users.findIndex((user) => user.app_id === appId)
     // console.log('pobieram index usera', index)
-    // const card = users[index][`k${tableCard[1] + 1}`] //todo tutaj nie index z hand tylko z table!!! w stanie indeksujesz po table
+    // const card = users[index][`k${tableCard[1] + 1}`] 
     // console.log(card)
 
     // console.log(`k${tableCard[1] + 1}`)
 
-    // todo tu muszę wziąć tylko id z tableCard a resztę to ze stanu !!!
+    
     const index = users.findIndex((user) => user.id === tableCard[0])
     if (tableCard) {
       //wysłanie kart tylko jak karta została wybrana
       const card = users[index][`k${tableCard[1] + 1}`] //to jest karta
-      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card) // todo zawsze idzie pod moje Id a jak zaznaczę inny stolik??
+      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card) 
     }
 
     //tu muszę najpierw zaktualizować w bazie dane dla stolika a później przesłać czas żeby wymusić kolejność
@@ -301,7 +301,7 @@ export default function Dashboard() {
         ) : (
           <button onClick={handleEndTurn}>
             <FontAwesomeIcon icon={faCheck} />
-          </button> //todo tu przekazać rozgrywającego tu ustawiam czas i wysyłam do bazy zobaczymy jak się posortuje i jak zadziała
+          </button> 
         )}
       </div>
 

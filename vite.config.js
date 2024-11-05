@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: './',  // Ustawienie ścieżek względnych
+  base: '/WIRUS_GRA/',  // Ustawienie ścieżek względnych
   plugins: [react()],
   server: {
     host: true, // Umożliwia dostęp przez sieć lokalną

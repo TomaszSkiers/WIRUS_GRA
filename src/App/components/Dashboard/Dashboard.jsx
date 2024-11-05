@@ -16,6 +16,9 @@ import {
   faRightToBracket
 } from "@fortawesome/free-solid-svg-icons"
 import { updateCards } from "../../supabase/updateCards"
+import getRandomCards from "../../functions/getRandomCards"
+import cards from "../../functions/cards"
+import { checkCards } from "../../functions/checkCard"
 
 // import { useNavigationWarning } from "../../functions/useNavigationWarning"
 
@@ -38,51 +41,67 @@ export default function Dashboard() {
     "empty-card"
   ])
   const [tableBlocker, setTableBlocker] = useState(false)
+  const [moreThanOneCardChecked, setMoreThanOneCardChecked] = useState(false)
+  const [handBlocker, setHandBlocker] = useState(false)
 
   const navigate = useNavigate()
 
   useEffect(() => {
     // todo <<<<---------------------------start
-    // todo zaczęło działać robię commit i trzeba dopieśćić -> wyswietlanie jest teraz wysyłka
-    // * tu muszę zaktualizować stan żeby zwizualizować efekt wybierania karty
-    //*ten useEffect do testów
-    // console.log(handCard)
-    // console.log(users)
-    // console.log(tableCard, '<<<<<< tutaj')
-    // console.log(locYourTurn)
+    const updateCards = async () => {
+      //sprawdzam ile zaznaczono kart
+      if (moreThanOneCardChecked) {
+        setInfo((prv) => ({
+          ...prv,
+          action:
+            "zaznaczono więcej niż jedną kartę, odznacz wszystkie karty i zaznacz właściwie"
+        }))
+        return
+      }
 
-    //sprawdzam czy wybrano organ ,który ma być położony
-    if (!handCard) {
-      setInfo((prv) => ({
-        ...prv,
-        instruction: "wybierz najpierw organ, który chcesz położyć"
-      }))
-      // można dodać jakiś dźwięk niepowodzenia
-      return
-    }
+      //sprawdzam czy wybrano organ ,który ma być położony
+      if (!handCard) {
+        setInfo((prv) => ({
+          ...prv,
+          action: "wybierz najpierw organ, który chcesz położyć"
+        }))
+        // można dodać jakiś dźwięk niepowodzenia
+        return
+      }
 
-    if (handCard !== false && tableCard !== false) {
-      //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
-      //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
-      setUsers((prv) =>
-        prv.map((user) =>
-          user.id === tableCard[0] //jak znajdziesz moj stan kart to
-            ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard
-            : user
+      // tutaj będzie moja funkcja await do sprawdzanaia
+      // i rezultat do wstawienia do stanu
+      // result [card, info]
+      const result = await checkCards(users, handCard, tableCard)
+
+      if (handCard !== false && tableCard !== false) {
+        //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
+        //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
+        // ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // to było poprzednio i działało
+        setUsers((prv) =>
+          prv.map((user) =>
+            user.id === tableCard[0] //jak znajdziesz moj stan kart to
+              ? { ...user, [`k${tableCard[1] + 1}`]: result[0] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard
+              : user
+          )
         )
-      )
 
-      const index = handCard[0] //pobieram index klikniętej karty
-      //zmieniam kartę w ręku na pustą dla wizualizacji
-      setHandWithCards((prv) => {
-        const copy = [...prv]
-        copy[index - 1] = "empty-card"
-        return copy
-      })
+        const index = handCard[0] //pobieram index klikniętej karty
+        //zmieniam kartę w ręku na pustą dla wizualizacji
+        setHandWithCards((prv) => {
+          const copy = [...prv]
+          copy[index - 1] = "empty-card"
+          return copy
+        })
 
-      //blokuję możliwość klikania w karty
-      setTableBlocker(true)
+        //blokuję możliwość klikania w karty
+        setTableBlocker(true)
+        setHandBlocker(true)
+        setInfo(prv => ({...prv, action: result[1]}))
+        
+      }
     }
+    updateCards()
   }, [tableCard]) // todo << ----------------end
 
   useEffect(() => {
@@ -210,18 +229,10 @@ export default function Dashboard() {
 
     if (usersSortedByTime[0]?.app_id === appId) {
       setLocYourTurn(true)
-      setInfo((prv) => ({
-        ...prv,
-        instruction:
-          "twoja kolej połóż karty i zatwierdź znaczkiem haczyka w prawym górnym rogu",
-        action: ""
-      }))
+      
     } else {
       setLocYourTurn(false)
-      setInfo((prv) => ({
-        ...prv,
-        instruction: "ekran zablokowany do kiedy będzie twoja kolej"
-      }))
+      
     }
     setQuarterback(usersSortedByTime[0]) //który stolik rozgrywa
   }, [users])
@@ -253,6 +264,14 @@ export default function Dashboard() {
 
     //czyszczę hancCard
     setHandCard(false)
+    //odblokowuję klikanie na ręku
+    setHandBlocker(false)
+    //losowanie nowej karty tylko jednej w tym przypadku
+    setHandWithCards((prv) =>
+      prv.map((card) =>
+        card === "empty-card" ? getRandomCards(cards, 1)[0] : card
+      )
+    )
   }
 
   return (
@@ -309,6 +328,8 @@ export default function Dashboard() {
           handWithCards={handWithCards}
           setHandWithCards={setHandWithCards}
           setTableBlocker={setTableBlocker}
+          setMoreThanOneCardChecked={setMoreThanOneCardChecked}
+          handBlocker={handBlocker}
         />
       ) : null}
     </div>

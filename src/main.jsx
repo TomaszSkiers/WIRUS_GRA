@@ -2,7 +2,7 @@ import "./App/styles/main.scss"
 import App from "./App/App"
 import { MyProvider } from "./App/components/Context/Context"
 
-import ReactDOM from "react-dom"
+import ReactDOM from "react-dom/client"
 
 // Znajdź element root
 const rootElement = document.getElementById("root")

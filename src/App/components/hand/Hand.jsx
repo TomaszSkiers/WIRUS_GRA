@@ -13,6 +13,8 @@ export default function Hand({
   handWithCards,
   setHandWithCards,
   setTableBlocker,
+  setMoreThanOneCardChecked,
+  handBlocker,
 }) {
   const [randomCards, setRandomCards] = useState(getRandomCards(cards, 3))
   const [selectedCards, setSelectedCards] = useState([])
@@ -20,6 +22,7 @@ export default function Hand({
 
 
   const handlePhotoClick = (cardNumber, cardName, index) => {
+    if (handBlocker) return //blokada ponownego losowania karty
     if (lockRerol) return // zablokowanie ponownego losowania
     setHandCard([cardNumber, cardName]) //todo ??
     setSelectedCards((prevSelected) =>
@@ -29,6 +32,11 @@ export default function Hand({
         ? [...prevSelected, index]
         : [...prevSelected.slice(1), index]
     )
+    if (selectedCards.length > 0){
+       setMoreThanOneCardChecked(true)
+    }else{
+      setMoreThanOneCardChecked(false)
+    }
     setInfo(prv => ({...prv, action: 'wybrałeś organ', instruction: ''}))
   }
   useEffect(() => {
@@ -47,6 +55,7 @@ export default function Hand({
   },[randomCards])
 
   const rerollSelectedCards = () => {
+    if(handBlocker) return //zabezpieczenie przed ponownym losowaniem
 
     if (!lockRerol) {
       setRandomCards((prevCards) =>

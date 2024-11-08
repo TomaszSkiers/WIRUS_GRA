@@ -1,0 +1,17 @@
+.winner_container {
+  height: 100%;
+  width: 100%;
+  border: 5px solid gold;
+  color: gold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h1{
+    font-size: 2rem;
+  }
+  button{
+    margin-top: 50px;
+    padding: 20px 40px;
+  }
+}

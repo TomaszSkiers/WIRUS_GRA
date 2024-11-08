@@ -1,21 +1,30 @@
 .player_cards_wrapper {
-    // width: 100%;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid orange;
-    border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
 
-    h3{
-      color: white;
-    }
+  h3 {
+    color: white;
+  }
+
+  .photos_wrapper {
+    display: flex;
+    gap: 3px; // Przestrzeń między zdjęciami
+    width: 100%;
 
     .photo {
-      flex: 1; // Każda karta zajmie równą część szerokości kontenera
-      max-width: 25%; // Maksymalna szerokość, aby zachować marginesy
-      // border: 1px solid blue;
-      &:hover{
-        
+      flex: 1;
+      max-width: calc(25% - 2px); // Dopasowuje szerokość do dostępnego miejsca uwzględniając `gap`
+      border: 2px solid lightslategrey;
+      border-radius: 8px;
+      object-fit: cover;
+     
+
+      &:hover {
         cursor: pointer;
       }
     }
   }
+}
+
+

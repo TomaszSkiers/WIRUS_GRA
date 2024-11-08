@@ -89,7 +89,8 @@ export default function Hand({
           onClick={() => handlePhotoClick(index + 1, card, index)}
           data-number={index + 1}
           style={{
-            backgroundColor: selectedCards.includes(index) ? "gray" : "black"
+            borderColor: selectedCards.includes(index) ? "red" : "white",
+            filter: selectedCards.includes(index) ? 'brightness(1.2)' : 'brightness(1)'
           }}
         />
       ))}

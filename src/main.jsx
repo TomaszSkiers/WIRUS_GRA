@@ -1,6 +1,6 @@
 import "./App/styles/main.scss"
 import App from "./App/App"
-import { MyProvider } from "./App/components/Context/Context"
+
 
 import ReactDOM from "react-dom/client"
 
@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(rootElement)
 
 // Renderuj aplikację wewnątrz MyProvider
 root.render(
-  <MyProvider>
+  
     <App />
-  </MyProvider>
+ 
 )

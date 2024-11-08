@@ -1,10 +1,11 @@
-import s from "./app.module.scss";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import WelcomeScreen from "./components/WelcomeScreen/WelcomeScreen";
-import Dashboard from "./components/Dashboard/Dashboard";
+import s from "./app.module.scss"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import WelcomeScreen from "./components/WelcomeScreen/WelcomeScreen"
+import Dashboard from "./components/Dashboard/Dashboard"
+import Winner from "./components/WinnerScreen/Winner"
 
 // Użyj zmiennej środowiskowej VITE_BASENAME (domyślnie pusty string dla środowiska lokalnego)
-const basename = import.meta.env.VITE_BASENAME || "";
+const basename = import.meta.env.VITE_BASENAME || ""
 
 export default function App() {
   return (
@@ -13,9 +14,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<WelcomeScreen />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="winner" element={<Winner />} />
         </Routes>
       </div>
     </Router>
-  );
+  )
 }
-

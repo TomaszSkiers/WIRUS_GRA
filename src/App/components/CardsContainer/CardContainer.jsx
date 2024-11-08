@@ -11,38 +11,41 @@ export default function CardContainer({
   clickProtection,
   lockYourTurn,
   setTableCard,
-  tableBlocker,
+  tableBlocker
 }) {
   const [selectedCard, setSelectedCard] = useState(null) // Przechowuje indeks klikniętej karty
   const [lockClikc, setLocClic] = useState(false) //blokuje ponowne kliknięcia po ustawieniu organu
 
   const handlePhotoClick = (index) => {
-    //klikać nie wolno jak położono kartę 
-    if(tableBlocker) return
+    //klikać nie wolno jak położono kartę
+    if (tableBlocker) return
 
     // blokowanie onClicka jeśli nie moja tura
-    if (!lockYourTurn ) return
+    if (!lockYourTurn) return
 
-    setTableCard([user.id, index, user[`k${index + 1}`] ]) //index, która kliknięta
-    
+    setTableCard([user.id, index, user[`k${index + 1}`]]) //index, która kliknięta
+
     //zaznaczanie i odznaczanie klikniętej karty na stole
     //oraz zaznaczanie i odznaczanie przy przejściu na inny stolik
     setClickProtection(color) //przekazuję kolor stolika do Dashboard
     setSelectedCard((prevSelected) => (prevSelected === index ? null : index))
-    // jak klikniesz to wpisz null żeby odznaczyć 
-    
-    
+    // jak klikniesz to wpisz null żeby odznaczyć
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     //*odznaczam wszystkie karty
     setSelectedCard(null)
-  },[lockYourTurn])
+  }, [lockYourTurn])
 
   return (
     <div className={s.player_cards_wrapper}>
-      
-      <div className={s.photos_wrapper} style={{ backgroundColor: color }}>
+      <div
+        className={s.photos_wrapper}
+        style={{
+          border: `3px solid ${color}`,
+          backgroundColor: color
+        }}
+      >
         {[user.k1, user.k2, user.k3, user.k4].map((card, index) => (
           <img
             key={index}
@@ -50,10 +53,14 @@ export default function CardContainer({
             src={`./photos/${card}.png`}
             onClick={() => handlePhotoClick(index)} //przekazuję dla każdej funkcji inny parametr
             style={{
-              backgroundColor:
-                selectedCard === index && clickProtection === color 
-                  ? "gray"
-                  : color // Zmieniamy kolor tła w zależności od wyboru
+              borderColor:
+                selectedCard === index && clickProtection === color
+                  ? "red"
+                  : color,
+              filter:
+                selectedCard === index && clickProtection === color
+                  ? "brightness(1.2)"
+                  : 'brightness(1)'
             }}
           />
         ))}
@@ -61,5 +68,3 @@ export default function CardContainer({
     </div>
   )
 }
-//todo dorobić blokowanie kliknięcia, tu muszę ogarnąć dwie rzeczy 
-//todo instrukcję warunkową w stylw i handePhotoClick

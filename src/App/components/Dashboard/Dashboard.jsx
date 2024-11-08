@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import s from "./dashboard.module.scss"
 import { generateSimpleID } from "../../functions/simpleID"
@@ -19,6 +19,8 @@ import { updateCards } from "../../supabase/updateCards"
 import getRandomCards from "../../functions/getRandomCards"
 import cards from "../../functions/cards"
 import { checkCards } from "../../functions/checkCard"
+import { handleEndOfGames } from "../../functions/handleEndOfGame"
+import { setNullToAppId } from "../../supabase/setNullToAppId"
 
 // import { useNavigationWarning } from "../../functions/useNavigationWarning"
 
@@ -29,7 +31,6 @@ export default function Dashboard() {
   const [locId, setLocId] = useState(false) //blokuje ponowne zapisywanie Id do localStorage
   const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
   const [locYourTurn, setLocYourTurn] = useState(false) //blokuje możliwość gry
-  const [quarterback, setQuarterback] = useState(false) //*dodano do testów
   const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
   const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
   const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
@@ -43,8 +44,12 @@ export default function Dashboard() {
   const [tableBlocker, setTableBlocker] = useState(false)
   const [moreThanOneCardChecked, setMoreThanOneCardChecked] = useState(false)
   const [handBlocker, setHandBlocker] = useState(false)
+  const [counter, setCounter] = useState(30) //na start 30 sekund na wykonanie tury
+  const [onOfTimer, setOnOfTimer] = useState(false) //na start zablokowany
+  const intervalRef = useRef(null)
 
   const navigate = useNavigate()
+  const navigateWinner = useNavigate()
 
   useEffect(() => {
     // todo <<<<---------------------------start
@@ -97,14 +102,21 @@ export default function Dashboard() {
         //blokuję możliwość klikania w karty
         setTableBlocker(true)
         setHandBlocker(true)
-        setInfo(prv => ({...prv, action: result[1]}))
-        
+        setInfo((prv) => ({ ...prv, action: result[1] }))
       }
     }
     updateCards()
   }, [tableCard]) // todo << ----------------end
 
   useEffect(() => {
+    
+
+    // todo Dodaję obsługę nieoczekiwaniego zamknięcia strony przez użytkownika
+    // window.addEventListener("beforeunload", ()=>{
+    //   const myId = users.find((user) => user.app_id === appId)?.id;
+    //   supabase.from('users').update({app_id: 'null'}).eq('id', myId)
+    // })
+
     // przekierowanie po przeładowaniu strony
     const dataFromLocalStorage = localStorage.getItem("userData")
     if (dataFromLocalStorage !== "false") navigate("/") //przekieruj na ekran startowy a tam się znuluje baza
@@ -136,6 +148,11 @@ export default function Dashboard() {
           if (payload.new.app_id === appId) {
             //zakładan filtr tylko na moje wiadomości
 
+            //todo ---------- counter
+            //*jak przyleci moje id to znaczy że jest tylko jeden gracz to tżeba wyłączyć
+            setOnOfTimer(false)
+            //todo ------------end counter
+
             if (!locId) {
               // to muszę zapisać tylko raz później zablokować
               localStorage.setItem("userData", payload.new.id)
@@ -164,6 +181,14 @@ export default function Dashboard() {
               )
             }
           } else {
+            //todo ---------------
+            //informacja o nowych kartach
+            setInfo( prv => ({...prv, action: `gracz ${payload.new.table} zakończył turę`}))
+            //todo -------------- counter
+            //* jak przyleci obce id to przedłużam czas
+            setOnOfTimer(true)
+            setCounter(30) //*ustawiam czas do końca tury na 30s
+            //todo ----------------- end counter
             // tutaj filtrowanie obcych id
             // jak wleci obce id aktualizuję sobie stan gry/ userów
             // tu wleci mój aktualy stan z kartami i czasem ja jestem najpóźniej w stanie gry więc aktywny jest teraz najwcześniejszy user
@@ -199,6 +224,7 @@ export default function Dashboard() {
 
     return () => {
       subscription.unsubscribe()
+      //todo  window.removeEventListener("beforeunload", handleBeforeUnload)
     }
   }, [])
 
@@ -210,11 +236,38 @@ export default function Dashboard() {
       action:
         "zostałeś zalogowany do bazy danych, jeżeli conajmniej dwa kolorowe stoliki są widoczne możesz zacząć grę, jeżeli nie to poczekaj na resztę graczy, na dole wylosowano trzy karty"
     }))
+    setOnOfTimer(true)
   }
   const endTheGame = () => {
     setSwitchButtons(false)
     navigate("/")
+    
   }
+  //todo ---------------------------------------------------------
+  // useEffect(() => {
+  //   // let interval
+
+  //   if (onOfTimer) {
+  //     intervalRef.current = setInterval(() => {
+  //       setCounter((prev) => {
+  //         if (prev > 0 ) {
+  //           return prev - 1 // Zmniejszamy licznik tylko, gdy oba warunki są spełnione
+  //         } else {
+  //           return 0 // Zwracamy poprzednią wartość, jeśli warunki nie są spełnione
+  //         }
+  //       })
+  //     }, 1000)
+  //   }
+
+  //   // Czyszczenie interwału, gdy `onOfTimer` jest wyłączone lub komponent się odmontowuje
+  //   return () => clearInterval(intervalRef.current)
+  // }, [onOfTimer])
+  //todo ------------------------------------------------------------
+
+  useEffect(() => {
+    //jak licznik odliczy do 0 to kończę turę
+    if (counter === 0) handleEndTurn()
+  }, [counter])
 
   useEffect(() => {
     // sortowanie po czasie
@@ -228,33 +281,46 @@ export default function Dashboard() {
     //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
 
     if (usersSortedByTime[0]?.app_id === appId) {
+      //todo < ----- users
       setLocYourTurn(true)
-      
+      setOnOfTimer(true) // ustawiam na T i uruchamiam useEffecta z inicjalizacją intervału
     } else {
       setLocYourTurn(false)
-      
+      setOnOfTimer(false) // F usuwa interval - resetuje timer
     }
-    setQuarterback(usersSortedByTime[0]) //który stolik rozgrywa
-  }, [users])
+
+    //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
+    //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
+    //* czyli tu powinno zadziałać
+    //* tylko najlepiej żeby sprawdzało wszystkich graczy
+    //* jeżeli zwróci mi ID wygranego gracz to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
+    //* brawo wygrana teg i tego i przycisk, czy nowa gra?
+    const winner = handleEndOfGames(users)
+    // console.log("winner", winner)
+
+    if (winner) {
+      // pobieram gracza który wygrał do wysyłki reszcie
+      const userObject = users.find((user) => user.id === winner)
+
+      //wyszukuję siebie
+      const myId = users.find((user) => user.app_id === appId)
+      navigate("/winner", { state: { userObject, myId: myId?.id } })
+    }
+
+    if (users.length === 1) {
+      setInfo( prv => ({...prv, action: 'jesteś jedynym graczem, czekaj na pozostałych', instruction: ''}))
+    }
+
+  }, [users]) //todo << --------------------------------------- users
 
   const handleEndTurn = async () => {
-    
-    // console.log('id plikacji',appId)
-    // console.log('zmienna users',users)
     console.log("zmienna table card", tableCard)
-    // const index = users.findIndex((user) => user.app_id === appId)
-    // console.log('pobieram index usera', index)
-    // const card = users[index][`k${tableCard[1] + 1}`] 
-    // console.log(card)
 
-    // console.log(`k${tableCard[1] + 1}`)
-
-    
     const index = users.findIndex((user) => user.id === tableCard[0])
     if (tableCard) {
       //wysłanie kart tylko jak karta została wybrana
       const card = users[index][`k${tableCard[1] + 1}`] //to jest karta
-      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card) 
+      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card)
     }
 
     //tu muszę najpierw zaktualizować w bazie dane dla stolika a później przesłać czas żeby wymusić kolejność
@@ -279,7 +345,8 @@ export default function Dashboard() {
       <div className={s.top_buttons_container}>
         {!switchButtons ? (
           <button onClick={joinTheGame}>
-            <FontAwesomeIcon icon={faRightToBracket} />
+            <FontAwesomeIcon icon={faRightToBracket} />{" "}
+            {/**ikonka dołącz do gry */}
           </button>
         ) : (
           <button onClick={endTheGame}>
@@ -290,18 +357,21 @@ export default function Dashboard() {
           className={s.table_color_container}
           style={{ border: `1px solid ${myTableColor}` }}
         >
-          <h3>twój stolik to</h3>
-          <h2 style={{ color: myTableColor }}>{myTableColor}</h2>
+          <h3 style={{ color: myTableColor }}>
+            twój stolik ma kolor {myTableColor}
+          </h3>
+          <h2> czas do końca tury {counter} </h2>{" "}
+          {/**renderowanie czasu bardzo spowolniło wybieranie elementów */}
         </div>
 
         {!locYourTurn ? (
           <span className={s.wait}>
-            <FontAwesomeIcon icon={faHourglassHalf} />
+            <FontAwesomeIcon icon={faHourglassHalf} /> {/**ikonka klepsydry */}
           </span>
         ) : (
           <button onClick={handleEndTurn}>
-            <FontAwesomeIcon icon={faCheck} />
-          </button> 
+            <FontAwesomeIcon icon={faCheck} /> {/**znaczek zakończenia tury */}
+          </button>
         )}
       </div>
 
@@ -335,4 +405,3 @@ export default function Dashboard() {
     </div>
   )
 }
-//jeszcze jest coś co  sie wykonuje asynchronicznie

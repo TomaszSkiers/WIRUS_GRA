@@ -30,7 +30,7 @@ export default function Winner() {
       >Wygrywa {userObject?.table}</h1>
       <button
         onClick={() => {
-          navigate("/")
+          navigate("/", { replace: true })
         }}
       >
         Zagraj jeszcze raz
@@ -38,3 +38,4 @@ export default function Winner() {
     </div>
   )
 }
+//przy przejściu z powrotem strzałkami nawigacji -> wstecz 

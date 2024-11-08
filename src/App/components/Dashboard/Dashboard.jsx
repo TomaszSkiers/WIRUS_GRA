@@ -119,7 +119,7 @@ export default function Dashboard() {
 
     // przekierowanie po przeładowaniu strony
     const dataFromLocalStorage = localStorage.getItem("userData")
-    if (dataFromLocalStorage !== "false") navigate("/") //przekieruj na ekran startowy a tam się znuluje baza
+    if (dataFromLocalStorage !== "false") navigate("/", { replace: true }) //przekieruj na ekran startowy a tam się znuluje baza
 
     const fetchActiveUsers = async () => {
       //f. do pobierania wszystkich użytkowników cały stan gry tylko na początku jeden raz
@@ -240,29 +240,29 @@ export default function Dashboard() {
   }
   const endTheGame = () => {
     setSwitchButtons(false)
-    navigate("/")
+    navigate("/", { replace: true })
     
   }
-  //todo ---------------------------------------------------------
-  // useEffect(() => {
-  //   // let interval
+  // todo ---------------------------------------------------------
+  useEffect(() => {
+    // let interval
 
-  //   if (onOfTimer) {
-  //     intervalRef.current = setInterval(() => {
-  //       setCounter((prev) => {
-  //         if (prev > 0 ) {
-  //           return prev - 1 // Zmniejszamy licznik tylko, gdy oba warunki są spełnione
-  //         } else {
-  //           return 0 // Zwracamy poprzednią wartość, jeśli warunki nie są spełnione
-  //         }
-  //       })
-  //     }, 1000)
-  //   }
+    if (onOfTimer) {
+      intervalRef.current = setInterval(() => {
+        setCounter((prev) => {
+          if (prev > 0 ) {
+            return prev - 1 // Zmniejszamy licznik tylko, gdy oba warunki są spełnione
+          } else {
+            return 0 // Zwracamy poprzednią wartość, jeśli warunki nie są spełnione
+          }
+        })
+      }, 1000)
+    }
 
-  //   // Czyszczenie interwału, gdy `onOfTimer` jest wyłączone lub komponent się odmontowuje
-  //   return () => clearInterval(intervalRef.current)
-  // }, [onOfTimer])
-  //todo ------------------------------------------------------------
+    // Czyszczenie interwału, gdy `onOfTimer` jest wyłączone lub komponent się odmontowuje
+    return () => clearInterval(intervalRef.current)
+  }, [onOfTimer])
+  // todo ------------------------------------------------------------
 
   useEffect(() => {
     //jak licznik odliczy do 0 to kończę turę
@@ -304,7 +304,7 @@ export default function Dashboard() {
 
       //wyszukuję siebie
       const myId = users.find((user) => user.app_id === appId)
-      navigate("/winner", { state: { userObject, myId: myId?.id } })
+      navigate("/winner", { state: { userObject, myId: myId?.id }, replace: true })
     }
 
     if (users.length === 1) {

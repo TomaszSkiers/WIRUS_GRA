@@ -45,3 +45,6 @@ url https://pjgojihznuoxpwjbckun.supabase.co
 
 //ogarnąć sytuację gdy są zaznaczone np trzy organy trzeba zablokować i poinformować że albo wymieniasz 
 albo zaznacz jeden organ
+
+// info trzeaba wyrzucić do oddzielnego komponentu i chyba przesyłać informacje przez useContext ale 
+    nie wiem jak muszę to sobie przećwiczyć

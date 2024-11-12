@@ -39,6 +39,8 @@ export default function Hand({
     }
     setInfo(prv => ({...prv, action: 'wybrałeś organ', instruction: ''}))
   }
+
+
   useEffect(() => {
     //jak przyjdzie moja kolej to odblokowuję możliwość wymiany kart jak nie moja kolej to nie
     if (!locYourTurn) {
@@ -48,6 +50,7 @@ export default function Hand({
       setLockRerol(false)
     }
   }, [locYourTurn])
+  
 
   useEffect(()=>{
     setHandWithCards(randomCards)

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import s from "./dashboard.module.scss"
 import { generateSimpleID } from "../../functions/simpleID"
@@ -21,6 +21,7 @@ import cards from "../../functions/cards"
 import { checkCards } from "../../functions/checkCard"
 import { handleEndOfGames } from "../../functions/handleEndOfGame"
 import { setNullToAppId } from "../../supabase/setNullToAppId"
+import Timer from "../Timer/Timer"
 
 // import { useNavigationWarning } from "../../functions/useNavigationWarning"
 
@@ -42,20 +43,19 @@ export default function Dashboard() {
     "empty-card"
   ])
   const [tableBlocker, setTableBlocker] = useState(false)
-  const [moreThanOneCardChecked, setMoreThanOneCardChecked] = useState(false)
+  const [moreThanOneCardChecked, setMoreThanOneCardChecked] = useState(false)//* 
   const [handBlocker, setHandBlocker] = useState(false)
-  const [counter, setCounter] = useState(30) //na start 30 sekund na wykonanie tury
-  const [onOfTimer, setOnOfTimer] = useState(false) //na start zablokowany
-  const intervalRef = useRef(null)
 
-  const navigate = useNavigate()
-  const navigateWinner = useNavigate()
+ const navigate = useNavigate()
 
-  useEffect(() => {
-    // todo <<<<---------------------------start
+  console.log('dashboard się renderuje')
+ 
+
+  useEffect(() => {//todo << ------------------------------------------------- start useEffect [tableCard]
+    
     const updateCards = async () => {
       //sprawdzam ile zaznaczono kart
-      if (moreThanOneCardChecked) {
+      if (moreThanOneCardChecked) { //* tu mam renderowanie aktualizacja spowoduje renderowanie wszystkiego jeszcze raz
         setInfo((prv) => ({
           ...prv,
           action:
@@ -106,7 +106,7 @@ export default function Dashboard() {
       }
     }
     updateCards()
-  }, [tableCard]) // todo << ----------------end
+  }, [tableCard]) // todo << ------------------------------------------------- end
 
   useEffect(() => {
     
@@ -131,6 +131,7 @@ export default function Dashboard() {
       if (error) {
         console.error("Błąd podczas pobierania aktywnych użytkowników:", error)
       } else {
+        //* to mogę sprawdzić, który gracz się nie wylogował, jeżeli log będzie starszy niż 30s tzn. że nie gra 
         setUsers(data) //zapisz stan gry do stanu
       }
     }
@@ -150,7 +151,7 @@ export default function Dashboard() {
 
             //todo ---------- counter
             //*jak przyleci moje id to znaczy że jest tylko jeden gracz to tżeba wyłączyć
-            setOnOfTimer(false)
+            
             //todo ------------end counter
 
             if (!locId) {
@@ -181,13 +182,12 @@ export default function Dashboard() {
               )
             }
           } else {
-            //todo ---------------
+            //todo ------------------------------------------------------------------------------------------------------------  timer 
             //informacja o nowych kartach
             setInfo( prv => ({...prv, action: `gracz ${payload.new.table} zakończył turę`}))
             //todo -------------- counter
             //* jak przyleci obce id to przedłużam czas
-            setOnOfTimer(true)
-            setCounter(30) //*ustawiam czas do końca tury na 30s
+           
             //todo ----------------- end counter
             // tutaj filtrowanie obcych id
             // jak wleci obce id aktualizuję sobie stan gry/ userów
@@ -236,38 +236,16 @@ export default function Dashboard() {
       action:
         "zostałeś zalogowany do bazy danych, jeżeli conajmniej dwa kolorowe stoliki są widoczne możesz zacząć grę, jeżeli nie to poczekaj na resztę graczy, na dole wylosowano trzy karty"
     }))
-    setOnOfTimer(true)
+  
   }
   const endTheGame = () => {
     setSwitchButtons(false)
     navigate("/", { replace: true })
     
   }
-  // todo ---------------------------------------------------------
-  useEffect(() => {
-    // let interval
 
-    if (onOfTimer) {
-      intervalRef.current = setInterval(() => {
-        setCounter((prev) => {
-          if (prev > 0 ) {
-            return prev - 1 // Zmniejszamy licznik tylko, gdy oba warunki są spełnione
-          } else {
-            return 0 // Zwracamy poprzednią wartość, jeśli warunki nie są spełnione
-          }
-        })
-      }, 1000)
-    }
 
-    // Czyszczenie interwału, gdy `onOfTimer` jest wyłączone lub komponent się odmontowuje
-    return () => clearInterval(intervalRef.current)
-  }, [onOfTimer])
-  // todo ------------------------------------------------------------
 
-  useEffect(() => {
-    //jak licznik odliczy do 0 to kończę turę
-    if (counter === 0) handleEndTurn()
-  }, [counter])
 
   useEffect(() => {
     // sortowanie po czasie
@@ -281,12 +259,12 @@ export default function Dashboard() {
     //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
 
     if (usersSortedByTime[0]?.app_id === appId) {
-      //todo < ----- users
+      //todo < ----------------------------------------------------- users
       setLocYourTurn(true)
-      setOnOfTimer(true) // ustawiam na T i uruchamiam useEffecta z inicjalizacją intervału
+
     } else {
       setLocYourTurn(false)
-      setOnOfTimer(false) // F usuwa interval - resetuje timer
+      
     }
 
     //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
@@ -360,7 +338,7 @@ export default function Dashboard() {
           <h3 style={{ color: myTableColor }}>
             twój stolik ma kolor {myTableColor}
           </h3>
-          <h2> czas do końca tury {counter} </h2>{" "}
+          <Timer/> {/**todo-------------------------------------------------------------- timer */}
           {/**renderowanie czasu bardzo spowolniło wybieranie elementów */}
         </div>
 

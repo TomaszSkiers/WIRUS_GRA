@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import s from "./cardContainer.module.scss"
+import { FunctionsContext, VariablesContext } from "../Context/Context"
 
 export default function CardContainer({
   user,
@@ -9,22 +10,28 @@ export default function CardContainer({
   color,
   setClickProtection,
   clickProtection,
-  lockYourTurn,
+  // lockYourTurn,
   setTableCard,
-  tableBlocker
+  // tableBlocker
 }) {
   const [selectedCard, setSelectedCard] = useState(null) // Przechowuje indeks klikniętej karty
   const [lockClikc, setLocClic] = useState(false) //blokuje ponowne kliknięcia po ustawieniu organu
+  const {handleSetTableCardCopy} = useContext(FunctionsContext)
+  const {tableBlocker} = useContext(VariablesContext)
+  const {locYourTurn} = useContext(VariablesContext)
 
   const handlePhotoClick = (index) => {
     //klikać nie wolno jak położono kartę
+    console.log(locYourTurn)
+
+
     if (tableBlocker) return
 
     // blokowanie onClicka jeśli nie moja tura
-    if (!lockYourTurn) return
+    if (!locYourTurn) return
 
     setTableCard([user.id, index, user[`k${index + 1}`]]) //index, która kliknięta
-
+    
     //zaznaczanie i odznaczanie klikniętej karty na stole
     //oraz zaznaczanie i odznaczanie przy przejściu na inny stolik
     setClickProtection(color) //przekazuję kolor stolika do Dashboard
@@ -35,7 +42,7 @@ export default function CardContainer({
   useEffect(() => {
     //*odznaczam wszystkie karty
     setSelectedCard(null)
-  }, [lockYourTurn])
+  }, [locYourTurn])
 
   return (
     <div className={s.player_cards_wrapper}>

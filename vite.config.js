@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true, // Umożliwia dostęp przez sieć lokalną
-    port: 3001, // Możesz też zmienić port, jeśli domyślny (3000) jest zajęty
+    port: 3000, // Możesz też zmienić port, jeśli domyślny (3000) jest zajęty
   },
 })

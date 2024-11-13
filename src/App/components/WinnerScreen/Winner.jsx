@@ -13,6 +13,7 @@ export default function Winner() {
 
   useEffect(() => {
     const cleanId = async () => {
+      
       await updateAllCards(userObject)
       await setNullToAppId(myId)
     }

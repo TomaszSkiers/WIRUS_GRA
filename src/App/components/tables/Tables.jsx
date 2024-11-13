@@ -1,15 +1,22 @@
 /* eslint-disable react/prop-types */
+import { useContext } from "react"
 import CardContainer from "../CardsContainer/CardContainer"
 import s from "./tables.module.scss"
+import { VariablesContext } from "../Context/Context"
 
 export default function Tables({
-  users,
+  // users,
   setClickProtection,
   clickProtection,
-  lockYourTurn,
+  // lockYourTurn,
   setTableCard,
-  tableBlocker
+  // tableBlocker
 }) {
+
+  const {users} = useContext(VariablesContext)
+  
+  
+
   return (
     <div className={s.tables_container}>
       {users.length > 0 ? (
@@ -24,9 +31,9 @@ export default function Tables({
               color={user.table}
               setClickProtection={setClickProtection}
               clickProtection={clickProtection}
-              lockYourTurn={lockYourTurn}
+              // lockYourTurn={lockYourTurn}
               setTableCard={setTableCard}
-              tableBlocker={tableBlocker}
+              // tableBlocker={tableBlocker}
             />
           ))
       ) : (

@@ -50,10 +50,16 @@ function Dashboard() {
 
   // const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
   const { tableCard } = useContext(VariablesContext)
-  const { setTableCard } = useContext(FunctionsContext)
+  // const { setTableCard } = useContext(FunctionsContext)
 
-  const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
-  const [myTableColor, setMyTableColor] = useState(false) //używam gdy zaznaczam aktywną kartę przy zmianie stolików
+  // const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
+  // const {clickProtection} = useContext(VariablesContext)
+  // const {setClickProtection} = useContext(FunctionsContext)
+
+  // const [myTableColor, setMyTableColor] = useState(false) //używam gdy zaznaczam aktywną kartę przy zmianie stolików
+  const { myTableColor } = useContext(VariablesContext)
+  const { setMyTableColor } = useContext(FunctionsContext)
+
   // const [info, setInfo] = useState({ action: "", instruction: "" }) //* przeniosłem do Contextu informacje dla użytkownika do kontenera .info
 
   // const [handWithCards, setHandWithCards] = useState([
@@ -252,7 +258,7 @@ function Dashboard() {
       setHandCard(false)
       setHandBlocker(false)
       // setUsers([])
-      //*------------------------------------------------- 
+      //*-------------------------------------------------
       //todo  window.removeEventListener("beforeunload", handleBeforeUnload)
     }
   }, [])
@@ -372,13 +378,8 @@ function Dashboard() {
 
       <Info />
 
-      <Tables
-        setTableCard={setTableCard}
-        setClickProtection={setClickProtection}
-        clickProtection={clickProtection}
-      />
+      <Tables />
       {switchButtons ? <Hand /> : null}
-      
     </div>
   )
 }

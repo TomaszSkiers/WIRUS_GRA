@@ -1,22 +1,12 @@
 /* eslint-disable react/prop-types */
-import { useContext } from "react"
+import React, { useContext } from "react"
 import CardContainer from "../CardsContainer/CardContainer"
 import s from "./tables.module.scss"
 import { VariablesContext } from "../Context/Context"
 
-export default function Tables({
-  // users,
-  setClickProtection,
-  clickProtection,
-  // lockYourTurn,
-  setTableCard,
-  // tableBlocker
-}) {
-
-  const {users} = useContext(VariablesContext)
-  console.log('tables się renderuje')
-  
-  
+function Tables() {
+  const { users } = useContext(VariablesContext)
+  console.log("tables się renderuje")
 
   return (
     <div className={s.tables_container}>
@@ -30,11 +20,6 @@ export default function Tables({
               user={user}
               userId={user.app_id}
               color={user.table}
-              setClickProtection={setClickProtection}
-              clickProtection={clickProtection}
-              // lockYourTurn={lockYourTurn}
-              setTableCard={setTableCard}
-              // tableBlocker={tableBlocker}
             />
           ))
       ) : (
@@ -43,4 +28,4 @@ export default function Tables({
     </div>
   )
 }
-
+export default React.memo(Tables)

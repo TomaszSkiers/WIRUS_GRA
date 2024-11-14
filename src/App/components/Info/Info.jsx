@@ -1,9 +1,9 @@
 
-import { useContext } from 'react'
+import React, { useContext } from 'react'
 import s from './info.module.scss'
 import { VariablesContext } from '../Context/Context'
 
-export default function Info() {
+function Info() {
 
     const {info} = useContext(VariablesContext)
 
@@ -15,3 +15,4 @@ export default function Info() {
     </div>
   )
 }
+export default React.memo(Info)

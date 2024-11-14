@@ -4,28 +4,21 @@ import { useState, useEffect, useContext } from "react"
 import s from "./cardContainer.module.scss"
 import { FunctionsContext, VariablesContext } from "../Context/Context"
 
-export default function CardContainer({
-  user,
-  userId,
-  color,
-  setClickProtection,
-  clickProtection,
-  // lockYourTurn,
-  setTableCard,
-  // tableBlocker
-}) {
+export default function CardContainer({ user, color }) {
   const [selectedCard, setSelectedCard] = useState(null) // Przechowuje indeks klikniętej karty
   const [lockClikc, setLocClic] = useState(false) //blokuje ponowne kliknięcia po ustawieniu organu
-  const {handleSetTableCardCopy} = useContext(FunctionsContext)
-  const {tableBlocker} = useContext(VariablesContext)
-  const {locYourTurn} = useContext(VariablesContext)
 
-  console.log('cardContainer się renderuje')
+  const { tableBlocker } = useContext(VariablesContext)
+  const { locYourTurn } = useContext(VariablesContext)
+  const { setTableCard } = useContext(FunctionsContext)
+  const { setClickProtection } = useContext(FunctionsContext)
+  const { clickProtection } = useContext(VariablesContext)
+
+  console.log("cardContainer się renderuje")
 
   const handlePhotoClick = (index) => {
     //klikać nie wolno jak położono kartę
     console.log(locYourTurn)
-
 
     if (tableBlocker) return
 
@@ -33,7 +26,7 @@ export default function CardContainer({
     if (!locYourTurn) return
 
     setTableCard([user.id, index, user[`k${index + 1}`]]) //index, która kliknięta
-    
+
     //zaznaczanie i odznaczanie klikniętej karty na stole
     //oraz zaznaczanie i odznaczanie przy przejściu na inny stolik
     setClickProtection(color) //przekazuję kolor stolika do Dashboard
@@ -69,7 +62,7 @@ export default function CardContainer({
               filter:
                 selectedCard === index && clickProtection === color
                   ? "brightness(1.2)"
-                  : 'brightness(1)'
+                  : "brightness(1)"
             }}
           />
         ))}

@@ -23,6 +23,16 @@ export const MyProvider = ({ children }) => {
     "empty-card",
     "empty-card"
   ])
+  const [clickProtection, setClickProtectionCopy] = useState(false)
+  const [myTableColor, setMyTableColorCopy] = useState(false)
+
+  const setMyTableColor = useCallback((setting)=> {
+    setMyTableColorCopy(setting)
+  },[])
+
+  const setClickProtection = useCallback((setting) => {
+    setClickProtectionCopy(setting)
+  }, [])
 
   const setMoreThanOneCardChecked = useCallback((setting)=> {
     setMoreThanOneCardCheckedCopy(setting)
@@ -78,6 +88,8 @@ export const MyProvider = ({ children }) => {
       setLocYourTurn,
       setTableBlocker,
       setMoreThanOneCardChecked,
+      setClickProtection,
+      setMyTableColor,
     }),
     [
       handleSetInfo,
@@ -90,6 +102,8 @@ export const MyProvider = ({ children }) => {
       setLocYourTurn,
       setTableBlocker,
       setMoreThanOneCardChecked,
+      setClickProtection,
+      setMyTableColor,
     ]
   )
 
@@ -107,6 +121,8 @@ export const MyProvider = ({ children }) => {
         locYourTurn,
         tableBlocker,
         moreThanOneCardChecked,
+        clickProtection,
+        myTableColor,
       }}
     >
       <FunctionsContext.Provider value={functions}>

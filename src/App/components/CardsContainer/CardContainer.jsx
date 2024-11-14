@@ -20,6 +20,8 @@ export default function CardContainer({
   const {tableBlocker} = useContext(VariablesContext)
   const {locYourTurn} = useContext(VariablesContext)
 
+  console.log('cardContainer się renderuje')
+
   const handlePhotoClick = (index) => {
     //klikać nie wolno jak położono kartę
     console.log(locYourTurn)

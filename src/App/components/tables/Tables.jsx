@@ -14,6 +14,7 @@ export default function Tables({
 }) {
 
   const {users} = useContext(VariablesContext)
+  console.log('tables się renderuje')
   
   
 

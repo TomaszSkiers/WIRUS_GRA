@@ -30,7 +30,7 @@ export default function WelcomeScreen() {
 
       <button
         onClick={() => {
-          navigate("dashboard", { replace: true })
+          navigate("dashboard")
         }}
       >
         START

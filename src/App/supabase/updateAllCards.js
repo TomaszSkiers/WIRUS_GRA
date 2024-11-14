@@ -1,7 +1,6 @@
 import supabase from "./supabase";
 
 export async function updateAllCards(user) {
-    console.log(user)
     const {id, k1, k2, k3, k4 } = user
     const { error } = await supabase
     .from('users')
@@ -17,7 +16,5 @@ export async function updateAllCards(user) {
 
     if(error) {
         console.log("błąd podczas ustawiania użytkownika na active", error)
-    }else{
-        // 
     }
 }

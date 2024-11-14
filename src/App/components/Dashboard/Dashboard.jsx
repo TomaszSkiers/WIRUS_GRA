@@ -34,28 +34,23 @@ function Dashboard() {
   const [switchButtons, setSwitchButtons] = useState(false)
 
   // const [users, setUsers] = useState([])
-  const {users} = useContext(VariablesContext)
-  const {setUsers} = useContext(FunctionsContext)
-
-
+  const { users } = useContext(VariablesContext)
+  const { setUsers } = useContext(FunctionsContext)
 
   const [locId, setLocId] = useState(false) //blokuje ponowne zapisywanie Id do localStorage
   const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
- 
+
   // const [locYourTurn, setLocYourTurn] = useState(false) //blokuje możliwość gry
-  const {locYourTurn} = useContext(VariablesContext)
-  const {setLocYourTurn} = useContext(FunctionsContext)
-
-
+  const { locYourTurn } = useContext(VariablesContext)
+  const { setLocYourTurn } = useContext(FunctionsContext)
 
   // const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
   const { handCard } = useContext(VariablesContext)
   const { setHandCard } = useContext(FunctionsContext)
 
   // const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
-  const {tableCard} = useContext(VariablesContext)
-  const {setTableCard} = useContext(FunctionsContext)
-
+  const { tableCard } = useContext(VariablesContext)
+  const { setTableCard } = useContext(FunctionsContext)
 
   const [clickProtection, setClickProtection] = useState(false) //zabezpieczenie przed zaznaczeniem dwóch kart na stoliku
   const [myTableColor, setMyTableColor] = useState(false) //używam gdy zaznaczam aktywną kartę przy zmianie stolików
@@ -71,13 +66,11 @@ function Dashboard() {
 
   // const [tableBlocker, setTableBlocker] = useState(false)
   // const {tableBlocker} = useContext(VariablesContext)
-  const {setTableBlocker} = useContext(FunctionsContext)
-
-
+  const { setTableBlocker } = useContext(FunctionsContext)
 
   // const [moreThanOneCardChecked, setMoreThanOneCardChecked] = useState(false)
-  const {moreThanOneCardChecked} = useContext(VariablesContext)
-  const {setMoreThanOneCardChecked} = useContext(FunctionsContext)
+  const { moreThanOneCardChecked } = useContext(VariablesContext)
+  // const { setMoreThanOneCardChecked } = useContext(FunctionsContext)
 
   // const [handBlocker, setHandBlocker] = useState(false)
   // const {handBlocker} = useContext(VariablesContext)
@@ -183,7 +176,7 @@ function Dashboard() {
             //zakładan filtr tylko na moje wiadomości
 
             //todo ---------- counter
-            //*jak przyleci moje id to znaczy że jest tylko jeden gracz to tżeba wyłączyć
+            //*jak przyleci moje id to znaczy że jest tylko jeden gracz to trzeba wyłączyć
 
             //todo ------------end counter
 
@@ -255,13 +248,18 @@ function Dashboard() {
 
     return () => {
       subscription.unsubscribe()
+      //* to zauważyłem problem przy starcie kładł starą kartę i blokował rękę
+      setHandCard(false)
+      setHandBlocker(false)
+      // setUsers([])
+      //*------------------------------------------------- 
       //todo  window.removeEventListener("beforeunload", handleBeforeUnload)
     }
   }, [])
 
   const joinTheGame = async () => {
     setSwitchButtons(true)
-    await injectAppId(appId) //todo nie odpala 
+    await injectAppId(appId) //todo nie odpala
   }
   const endTheGame = () => {
     setSwitchButtons(false)
@@ -280,7 +278,6 @@ function Dashboard() {
     //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
 
     if (usersSortedByTime[0]?.app_id === appId) {
-      //todo < ----------------------------------------------------- users
       setLocYourTurn(true)
     } else {
       setLocYourTurn(false)
@@ -290,7 +287,7 @@ function Dashboard() {
     //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
     //* czyli tu powinno zadziałać
     //* tylko najlepiej żeby sprawdzało wszystkich graczy
-    //* jeżeli zwróci mi ID wygranego gracz to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
+    //* jeżeli zwróci mi ID wygranego gracza to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
     //* brawo wygrana teg i tego i przycisk, czy nowa gra?
 
     const winner = handleEndOfGames(users)
@@ -303,15 +300,14 @@ function Dashboard() {
       //wyszukuję siebie
       const myId = users.find((user) => user.app_id === appId)
       navigate("/winner", {
-        state: { userObject, myId: myId?.id },
-        replace: true
+        state: { userObject, myId: myId?.id }
       })
     }
 
     if (users.length === 1) {
       handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
     }
-  }, [users]) //todo << --------------------------------------- users
+  }, [users])
 
   const handleEndTurn = async () => {
     console.log("zmienna table card", tableCard)
@@ -360,9 +356,7 @@ function Dashboard() {
           <h3 style={{ color: myTableColor }}>
             twój stolik ma kolor {myTableColor}
           </h3>
-          <Timer />{" "}
-          {/**todo-------------------------------------------------------------- timer */}
-          {/**renderowanie czasu bardzo spowolniło wybieranie elementów */}
+          <Timer />
         </div>
 
         {!locYourTurn ? (
@@ -379,24 +373,12 @@ function Dashboard() {
       <Info />
 
       <Tables
-        // users={users}
         setTableCard={setTableCard}
         setClickProtection={setClickProtection}
         clickProtection={clickProtection}
-        // lockYourTurn={locYourTurn} //tu literówka trzeba uważać!1
-        // tableBlocker={tableBlocker}
       />
-      {switchButtons ? (
-        <Hand
-          // setHandCard={setHandCard}
-          // locYourTurn={locYourTurn}
-          // handWithCards={handWithCards}//todo
-          // setHandWithCards={setHandWithCards}
-          // setTableBlocker={setTableBlocker}
-          // setMoreThanOneCardChecked={setMoreThanOneCardChecked}
-          // handBlocker={handBlocker}
-        />
-      ) : null}
+      {switchButtons ? <Hand /> : null}
+      
     </div>
   )
 }

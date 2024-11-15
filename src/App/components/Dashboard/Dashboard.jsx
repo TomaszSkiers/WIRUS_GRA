@@ -18,7 +18,7 @@ import {
 import { updateCards } from "../../supabase/updateCards"
 import getRandomCards from "../../functions/getRandomCards"
 import cards from "../../functions/cards"
-import { checkCards } from "../../functions/checkCard"
+
 
 // import { setNullToAppId } from "../../supabase/setNullToAppId"
 import Timer from "../Timer/Timer"
@@ -87,61 +87,7 @@ function Dashboard() {
 
   console.log("dashboard się renderuje")
 
-  useEffect(() => {
-    //todo << ------------------------------------------------- start useEffect [tableCard]
-
-    const updateCards = async () => {
-      //sprawdzam ile zaznaczono kart
-      if (moreThanOneCardChecked) {
-        //* tu mam renderowanie aktualizacja spowoduje renderowanie wszystkiego jeszcze raz
-        handleSetInfo(
-          "zaznaczyłeś więcej niż jedną kartę i tu trzeba dokończyć tekst"
-        )
-        return
-      }
-
-      //sprawdzam czy wybrano organ ,który ma być położony
-      if (!handCard) {
-        handleSetInfo("wybierz najpierw organ, który chcesz położyć")
-
-        // można dodać jakiś dźwięk niepowodzenia
-        return
-      }
-
-      // tutaj będzie moja funkcja await do sprawdzanaia
-      // i rezultat do wstawienia do stanu
-      // result [card, info]
-      const result = await checkCards(users, handCard, tableCard)
-
-      if (handCard !== false && tableCard !== false) {
-        //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
-        //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
-        // ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // to było poprzednio i działało
-        setUsers((prv) =>
-          prv.map((user) =>
-            user.id === tableCard[0] //jak znajdziesz moj stan kart to
-              ? { ...user, [`k${tableCard[1] + 1}`]: result[0] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard
-              : user
-          )
-        )
-
-        const index = handCard[0] //pobieram index klikniętej karty
-        //zmieniam kartę w ręku na pustą dla wizualizacji
-        setHandWithCards((prv) => {
-          const copy = [...prv]
-          copy[index - 1] = "empty-card"
-          return copy
-        })
-
-        //blokuję możliwość klikania w karty
-        setTableBlocker(true)
-        setHandBlocker(true)
-        // setInfo((prv) => ({ ...prv, action: result[1] }))
-      }
-    }
-    updateCards()
-  }, [tableCard]) // todo << ------------------------------------------------- end
-
+ 
   useEffect(() => {
     // todo Dodaję obsługę nieoczekiwaniego zamknięcia strony przez użytkownika
     // window.addEventListener("beforeunload", ()=>{

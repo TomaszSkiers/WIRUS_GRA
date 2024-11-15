@@ -3,6 +3,7 @@ import { createContext, useCallback, useMemo, useState, useEffect } from "react"
 import { generateSimpleID } from "../../functions/simpleID"
 import { handleEndOfGames } from "../../functions/handleEndOfGame"
 import { useNavigate } from "react-router-dom"
+import { checkCards } from "../../functions/checkCard"
 
 // Tworzymy kontekst
 export const VariablesContext = createContext()
@@ -110,7 +111,7 @@ export const MyProvider = ({ children }) => {
     ]
   )
 
-  //przenoszę obsługę users z dashboard do kontextu
+  //*przenoszę obsługę users z dashboard do useContext
   useEffect(() => {
     // sortowanie po czasie
     const usersSortedByTime = [...users].sort(
@@ -153,6 +154,63 @@ export const MyProvider = ({ children }) => {
       handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
     }
   }, [users])
+
+  //*przenoszę obsługę tableCard z dashboard do useContext
+  useEffect(() => {
+    //todo << ------------------------------------------------- start useEffect [tableCard]
+
+    const updateCards = async () => {
+      //sprawdzam ile zaznaczono kart
+      if (moreThanOneCardChecked) {
+        //* tu mam renderowanie aktualizacja spowoduje renderowanie wszystkiego jeszcze raz
+        handleSetInfo(
+          "zaznaczyłeś więcej niż jedną kartę i tu trzeba dokończyć tekst"
+        )
+        return
+      }
+
+      //sprawdzam czy wybrano organ ,który ma być położony
+      if (!handCard) {
+        handleSetInfo("wybierz najpierw organ, który chcesz położyć")
+
+        // można dodać jakiś dźwięk niepowodzenia
+        return
+      }
+
+      // tutaj będzie moja funkcja await do sprawdzanaia
+      // i rezultat do wstawienia do stanu
+      // result [card, info]
+      const result = await checkCards(users, handCard, tableCard)
+
+      if (handCard !== false && tableCard !== false) {
+        //* uruchom wstawianie do bazy danych , nie tutaj tylko w handleEndTurn
+        //* a tutaj wizualizację dla użytkownika, czyli aktualizacja stanu
+        // ? { ...user, [`k${tableCard[1] + 1}`]: handCard[1] } // to było poprzednio i działało
+        setUsers((prv) =>
+          prv.map((user) =>
+            user.id === tableCard[0] //jak znajdziesz moj stan kart to
+              ? { ...user, [`k${tableCard[1] + 1}`]: result[0] } // z pod pole k1 lub k2 lub k3 wstaw wartość z handCard
+              : user
+          )
+        )
+
+        const index = handCard[0] //pobieram index klikniętej karty
+        //zmieniam kartę w ręku na pustą dla wizualizacji
+        setHandWithCards((prv) => {
+          const copy = [...prv]
+          copy[index - 1] = "empty-card"
+          return copy
+        })
+
+        //blokuję możliwość klikania w karty
+        setTableBlocker(true)
+        setHandBlocker(true)
+        // setInfo((prv) => ({ ...prv, action: result[1] }))
+      }
+    }
+    updateCards()
+  }, [tableCard]) // todo << ------------------------------------------------- end
+
 
   return (
     <VariablesContext.Provider

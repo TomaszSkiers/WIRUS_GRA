@@ -36,6 +36,8 @@ function HandleEndTurn() {
         }
     
         //tu muszę najpierw zaktualizować w bazie dane dla stolika a później przesłać czas żeby wymusić kolejność
+        //* dlaczego tak zrobiłem, mmm chyba dlatego, że mogę zaktualizować kartę przeciwnika 
+        //* tu muszę przemyśleć temat bo to powoduje niepotrzebne renderowanie komponentu 
         await injectNewTime(appId)
     
         handleSetInfo("karty wysłane") 

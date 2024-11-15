@@ -7,14 +7,12 @@ import Hand from "../hand/hand"
 import Timer from "../Timer/Timer"
 import Info from "../Info/Info"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import {
-  faCircleXmark,
-  faHourglassHalf,
-} from "@fortawesome/free-solid-svg-icons"
+import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons"
 
 import { FunctionsContext, VariablesContext } from "../Context/Context"
 import HandleEndTurn from "../HandleEndTurn/HandleEndTurn"
 import JoinTheGame from "../JoinTheGame/JoinTheGame"
+import EndTheGame from "../EndTheGame/EndTheGame"
 
 function Dashboard() {
   const navigate = useNavigate()
@@ -22,7 +20,7 @@ function Dashboard() {
   // Contexty
   const { locYourTurn, myTableColor, switchButtons } =
     useContext(VariablesContext)
-  const { setHandCard, setHandBlocker, handleSetInfo, setSwitchButtons } =
+  const { setHandCard, setHandBlocker, handleSetInfo } =
     useContext(FunctionsContext)
 
   console.log("dashboard się renderuje")
@@ -50,21 +48,10 @@ function Dashboard() {
     }
   }, [])
 
-  const endTheGame = () => {
-    setSwitchButtons(false)
-    navigate("/", { replace: true })
-  }
-
   return (
     <div className={s.dashboard_container}>
       <div className={s.top_buttons_container}>
-        {!switchButtons ? (
-          <JoinTheGame />
-        ) : (
-          <button onClick={endTheGame}>
-            <FontAwesomeIcon icon={faCircleXmark} />
-          </button>
-        )}
+        {!switchButtons ? <JoinTheGame /> : <EndTheGame />}
         <div
           className={s.table_color_container}
           style={{ border: `1px solid ${myTableColor}` }}

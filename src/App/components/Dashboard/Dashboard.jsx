@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import s from "./dashboard.module.scss"
 import Tables from "../tables/tables"
@@ -10,23 +10,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faCircleXmark,
   faHourglassHalf,
-  faRightToBracket
 } from "@fortawesome/free-solid-svg-icons"
-import { injectAppId } from "../../supabase/injectAppId"
 
 import { FunctionsContext, VariablesContext } from "../Context/Context"
 import HandleEndTurn from "../HandleEndTurn/HandleEndTurn"
+import JoinTheGame from "../JoinTheGame/JoinTheGame"
 
 function Dashboard() {
   const navigate = useNavigate()
 
   // Contexty
-  const { appId, locYourTurn, myTableColor } = useContext(VariablesContext)
-  const { setHandCard, setHandBlocker, handleSetInfo } =
+  const { locYourTurn, myTableColor, switchButtons } =
+    useContext(VariablesContext)
+  const { setHandCard, setHandBlocker, handleSetInfo, setSwitchButtons } =
     useContext(FunctionsContext)
-
-  // Lokalne stany
-  const [switchButtons, setSwitchButtons] = useState(false)
 
   console.log("dashboard się renderuje")
 
@@ -53,10 +50,6 @@ function Dashboard() {
     }
   }, [])
 
-  const joinTheGame = async () => {
-    setSwitchButtons(true)
-    await injectAppId(appId) //todo nie odpala
-  }
   const endTheGame = () => {
     setSwitchButtons(false)
     navigate("/", { replace: true })
@@ -66,10 +59,7 @@ function Dashboard() {
     <div className={s.dashboard_container}>
       <div className={s.top_buttons_container}>
         {!switchButtons ? (
-          <button onClick={joinTheGame}>
-            <FontAwesomeIcon icon={faRightToBracket} />{" "}
-            {/**ikonka dołącz do gry */}
-          </button>
+          <JoinTheGame />
         ) : (
           <button onClick={endTheGame}>
             <FontAwesomeIcon icon={faCircleXmark} />

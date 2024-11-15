@@ -33,8 +33,13 @@ export const MyProvider = ({ children }) => {
   const [myTableColor, setMyTableColorCopy] = useState(false)
   const [locId, setLocId] = useState(false) //blokuje ponowne zapisywanie Id do localStorage
   const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
+  const [switchButtons, setSwitchButtonsCopy] = useState(false)
 
   const navigate = useNavigate()
+
+  const setSwitchButtons = useCallback((setting)=> {
+    setSwitchButtonsCopy(setting)
+  },[])
 
   const setMyTableColor = useCallback((setting) => {
     setMyTableColorCopy(setting)
@@ -99,7 +104,8 @@ export const MyProvider = ({ children }) => {
       setTableBlocker,
       setMoreThanOneCardChecked,
       setClickProtection,
-      setMyTableColor
+      setMyTableColor,
+      setSwitchButtons
     }),
     [
       handleSetInfo,
@@ -113,7 +119,8 @@ export const MyProvider = ({ children }) => {
       setTableBlocker,
       setMoreThanOneCardChecked,
       setClickProtection,
-      setMyTableColor
+      setMyTableColor,
+      setSwitchButtons
     ]
   )
 
@@ -335,7 +342,8 @@ export const MyProvider = ({ children }) => {
         tableBlocker,
         moreThanOneCardChecked,
         clickProtection,
-        myTableColor
+        myTableColor,
+        switchButtons
       }}
     >
       <FunctionsContext.Provider value={functions}>

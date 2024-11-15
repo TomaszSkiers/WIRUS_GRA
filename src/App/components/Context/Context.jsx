@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { createContext, useCallback, useMemo, useState, useEffect } from "react"
 import { generateSimpleID } from "../../functions/simpleID"

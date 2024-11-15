@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import s from "./dashboard.module.scss"
 // import { generateSimpleID } from "../../functions/simpleID"
 import { injectAppId } from "../../supabase/injectAppId"
-import supabase from "../../supabase/supabase"
+
 import Tables from "../tables/tables"
 import { injectNewTime } from "../../supabase/injectNewTime"
 import Hand from "../hand/hand"
@@ -18,7 +18,6 @@ import {
 import { updateCards } from "../../supabase/updateCards"
 import getRandomCards from "../../functions/getRandomCards"
 import cards from "../../functions/cards"
-
 
 // import { setNullToAppId } from "../../supabase/setNullToAppId"
 import Timer from "../Timer/Timer"
@@ -35,17 +34,15 @@ function Dashboard() {
 
   // const [users, setUsers] = useState([])
   const { users } = useContext(VariablesContext)
-  const { setUsers } = useContext(FunctionsContext)
+  // const { setUsers } = useContext(FunctionsContext)
 
-  const [locId, setLocId] = useState(false) //blokuje ponowne zapisywanie Id do localStorage
-  const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
-
+ 
   // const [locYourTurn, setLocYourTurn] = useState(false) //blokuje możliwość gry
   const { locYourTurn } = useContext(VariablesContext)
   // const { setLocYourTurn } = useContext(FunctionsContext)
 
   // const [handCard, setHandCard] = useState(false) //karta wybrana z ręki
-  const { handCard } = useContext(VariablesContext)
+  // const { handCard } = useContext(VariablesContext)
   const { setHandCard } = useContext(FunctionsContext)
 
   // const [tableCard, setTableCard] = useState(false) //karta wybrana ze stolika
@@ -58,7 +55,7 @@ function Dashboard() {
 
   // const [myTableColor, setMyTableColor] = useState(false) //używam gdy zaznaczam aktywną kartę przy zmianie stolików
   const { myTableColor } = useContext(VariablesContext)
-  const { setMyTableColor } = useContext(FunctionsContext)
+  // const { setMyTableColor } = useContext(FunctionsContext)
 
   // const [info, setInfo] = useState({ action: "", instruction: "" }) //* przeniosłem do Contextu informacje dla użytkownika do kontenera .info
 
@@ -72,10 +69,10 @@ function Dashboard() {
 
   // const [tableBlocker, setTableBlocker] = useState(false)
   // const {tableBlocker} = useContext(VariablesContext)
-  const { setTableBlocker } = useContext(FunctionsContext)
+  // const { setTableBlocker } = useContext(FunctionsContext)
 
   // const [moreThanOneCardChecked, setMoreThanOneCardChecked] = useState(false)
-  const { moreThanOneCardChecked } = useContext(VariablesContext)
+  // const { moreThanOneCardChecked } = useContext(VariablesContext)
   // const { setMoreThanOneCardChecked } = useContext(FunctionsContext)
 
   // const [handBlocker, setHandBlocker] = useState(false)
@@ -87,7 +84,6 @@ function Dashboard() {
 
   console.log("dashboard się renderuje")
 
- 
   useEffect(() => {
     // todo Dodaję obsługę nieoczekiwaniego zamknięcia strony przez użytkownika
     // window.addEventListener("beforeunload", ()=>{
@@ -99,107 +95,9 @@ function Dashboard() {
     const dataFromLocalStorage = localStorage.getItem("userData")
     if (dataFromLocalStorage !== "false") navigate("/", { replace: true }) //przekieruj na ekran startowy a tam się znuluje baza
 
-    const fetchActiveUsers = async () => {
-      //f. do pobierania wszystkich użytkowników cały stan gry tylko na początku jeden raz
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .not("app_id", "is", null)
-
-      if (error) {
-        console.error("Błąd podczas pobierania aktywnych użytkowników:", error)
-      } else {
-        //* to mogę sprawdzić, który gracz się nie wylogował, jeżeli log będzie starszy niż 30s tzn. że nie gra
-        setUsers(data) //zapisz stan gry do stanu
-      }
-    }
-
-    // Inicjalizacja subskrypcji
-    const subscription = supabase
-      .channel("public:users")
-      .on(
-        "postgres_changes",
-        { event: "update", schema: "public", table: "users" },
-        async (payload) => {
-          console.log("ładunek z bazy danych", payload.new)
-          setTableBlocker(false) //wyłączam blokowanie kliknięć na stoliku
-
-          if (payload.new.app_id === appId) {
-            //zakładan filtr tylko na moje wiadomości
-
-            //todo ---------- counter
-            //*jak przyleci moje id to znaczy że jest tylko jeden gracz to trzeba wyłączyć
-
-            //todo ------------end counter
-
-            if (!locId) {
-              // to muszę zapisać tylko raz później zablokować
-              localStorage.setItem("userData", payload.new.id)
-              setMyTableColor(payload.new.table)
-              setLocId(true)
-            }
-            if (!locFetAcUsers) {
-              //* tu mogę sprawdzić czy users.lenght === 1
-              // jak dołączam do gry pobieram wszystkich userów później będę na bieżąco aktualizował stan
-              await fetchActiveUsers()
-              setlocFetAcUsers(true) //wyłączm ponowne pobieranie wszystkich graczy muszę to zrobić tylko na początku później oszczędzam zapytania do bazy danych
-            } else {
-              //* to dopiero sie wykona po wciśnięciu dołącz do gry jak zostaną pobrani wszyscy gracze (wszyscy gracze są pobierani tylko raz na początku)
-              setUsers(
-                (
-                  prv // jak wlecą wiadomości odemnie to mój stan też trzeba zaktualizować
-                ) =>
-                  prv.map(
-                    (
-                      user //jak znajdzisz w stanie obiekt z moim ID to go zaktualizuj
-                    ) =>
-                      user.id === payload.new.id
-                        ? { ...user, ...payload.new }
-                        : user
-                  )
-              )
-            }
-          } else {
-            //todo ------------------------------------------------------------------------------------------------------------  timer
-            //informacja o nowych kartach
-            handleSetInfo(`gracz ${payload.new.table} zakończył turę`)
-            //todo -------------- counter
-            //* jak przyleci obce id to przedłużam czas
-            // odblokowuję rękę
-
-            //todo ----------------- end counter
-            // tutaj filtrowanie obcych id
-            // jak wleci obce id aktualizuję sobie stan gry/ userów
-            // tu wleci mój aktualy stan z kartami i czasem ja jestem najpóźniej w stanie gry więc aktywny jest teraz najwcześniejszy user
-            setUsers((prv) => {
-              // aktualizacja stanu users (stanu gry)
-              const index = prv.findIndex((user) => user.id === payload.new.id)
-
-              // Sprawdzamy, czy app_id jest null
-              if (payload.new.app_id === null) {
-                // Usuwamy użytkownika ze stanu, jeśli app_id jest null
-                return prv.filter((user) => user.id !== payload.new.id)
-              }
-
-              if (index !== -1) {
-                //jeżeli przyleciał user, który już istnieje w stanie, to go aktualizuję
-                const updatedUsers = [...prv]
-                updatedUsers[index] = { ...updatedUsers[index], ...payload.new }
-                return updatedUsers
-              } else {
-                //jeżeli przyleciał user, którego nie ma w stanie to go dodaję
-                return [...prv, payload.new]
-              }
-            })
-          }
-        }
-      )
-      .subscribe()
-
     handleSetInfo("naciśnij zieloną strzałkę w lewym górnym rogu ekranu")
 
     return () => {
-      subscription.unsubscribe()
       //* to zauważyłem problem przy starcie kładł starą kartę i blokował rękę
       setHandCard(false)
       setHandBlocker(false)
@@ -217,8 +115,6 @@ function Dashboard() {
     setSwitchButtons(false)
     navigate("/", { replace: true })
   }
-
- 
 
   const handleEndTurn = async () => {
     console.log("zmienna table card", tableCard)

@@ -49,4 +49,9 @@ albo zaznacz jeden organ
 // info trzeaba wyrzucić do oddzielnego komponentu i chyba przesyłać informacje przez useContext ale 
     nie wiem jak muszę to sobie przećwiczyć
 
-// 
+// jak wysyłam dane to i je odbieram i mogę przefiltrować moje id i nie aktualizować stanu? 
+    ale muszę przemyśleć co z czasem, żeby poprawnie wyznaczyć rozgrywającego 
+    dobrzy by było żeby moja zmiana aktualizowała innych ale nie mnie bo mój stan jest aktualny, i tylko
+    trzeba nanieść zmiany do bazy danych a lokalnie już stan jest ok 
+
+//

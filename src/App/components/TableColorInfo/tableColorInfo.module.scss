@@ -1,0 +1,11 @@
+.table_color_info {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    h3, h2{
+        color: white;
+        font-weight: bold;
+    }
+}

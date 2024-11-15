@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom"
 import s from "./dashboard.module.scss"
 import Tables from "../tables/tables"
 import Hand from "../hand/hand"
-import Timer from "../Timer/Timer"
 import Info from "../Info/Info"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons"
@@ -13,13 +12,13 @@ import { FunctionsContext, VariablesContext } from "../Context/Context"
 import HandleEndTurn from "../HandleEndTurn/HandleEndTurn"
 import JoinTheGame from "../JoinTheGame/JoinTheGame"
 import EndTheGame from "../EndTheGame/EndTheGame"
+import TableColorInfo from "../TableColorInfo/TableColorInfo"
 
 function Dashboard() {
   const navigate = useNavigate()
 
   // Contexty
-  const { locYourTurn, myTableColor, switchButtons } =
-    useContext(VariablesContext)
+  const { locYourTurn, switchButtons } = useContext(VariablesContext)
   const { setHandCard, setHandBlocker, handleSetInfo } =
     useContext(FunctionsContext)
 
@@ -52,15 +51,8 @@ function Dashboard() {
     <div className={s.dashboard_container}>
       <div className={s.top_buttons_container}>
         {!switchButtons ? <JoinTheGame /> : <EndTheGame />}
-        <div
-          className={s.table_color_container}
-          style={{ border: `1px solid ${myTableColor}` }}
-        >
-          <h3 style={{ color: myTableColor }}>
-            twój stolik ma kolor {myTableColor}
-          </h3>
-          <Timer />
-        </div>
+
+        <TableColorInfo />
 
         {!locYourTurn ? (
           <span className={s.wait}>
@@ -74,7 +66,7 @@ function Dashboard() {
       <Info />
 
       <Tables />
-      {switchButtons ? <Hand /> : null}
+      {switchButtons ? <Hand /> : null} {/**dodać obsługę oczekiwania na dane z bazy danych */}
     </div>
   )
 }

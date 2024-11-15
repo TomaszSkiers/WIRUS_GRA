@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import s from "./endTheGame.module.scss"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons"
@@ -12,6 +12,11 @@ function EndTheGame() {
     setSwitchButtons(false)
     navigate("/", { replace: true })
   }
+  useEffect(() => {
+    return () => {
+      setSwitchButtons(false)
+    }
+  }, [])
   return (
     <button className={s.end_the_game_button} onClick={endTheGame}>
       <FontAwesomeIcon icon={faCircleXmark} />

@@ -8,7 +8,7 @@ function Timer() {
   const {handleSetInfo} = useContext(FunctionsContext)
  
 
-  // console.log(tableCardCopy)
+  // console.log('timer sie renderuje')
 
   const decrementCount = useCallback(() => setCounter((prv) => prv - 1), [])
 

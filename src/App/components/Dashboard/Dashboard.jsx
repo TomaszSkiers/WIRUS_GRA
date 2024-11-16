@@ -5,20 +5,17 @@ import s from "./dashboard.module.scss"
 import Tables from "../tables/tables"
 import Hand from "../hand/hand"
 import Info from "../Info/Info"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons"
 
-import { FunctionsContext, VariablesContext } from "../Context/Context"
+import { FunctionsContext } from "../Context/Context"
 import HandleEndTurn from "../HandleEndTurn/HandleEndTurn"
 import JoinTheGame from "../JoinTheGame/JoinTheGame"
 import EndTheGame from "../EndTheGame/EndTheGame"
 import TableColorInfo from "../TableColorInfo/TableColorInfo"
+import Hourglass from "../Hourglass/Hourglass"
 
 function Dashboard() {
   const navigate = useNavigate()
 
-  // Contexty
-  const { locYourTurn, switchButtons } = useContext(VariablesContext)
   const { setHandCard, setHandBlocker, handleSetInfo } =
     useContext(FunctionsContext)
 
@@ -50,23 +47,16 @@ function Dashboard() {
   return (
     <div className={s.dashboard_container}>
       <div className={s.top_buttons_container}>
-        {!switchButtons ? <JoinTheGame /> : <EndTheGame />}
-
+        <JoinTheGame />
+        <EndTheGame />
         <TableColorInfo />
-
-        {!locYourTurn ? (
-          <span className={s.wait}>
-            <FontAwesomeIcon icon={faHourglassHalf} /> {/**ikonka klepsydry */}
-          </span>
-        ) : (
-          <HandleEndTurn />
-        )}
+        <Hourglass />
+        <HandleEndTurn />
       </div>
 
       <Info />
-
       <Tables />
-      {switchButtons ? <Hand /> : null} {/**dodać obsługę oczekiwania na dane z bazy danych */}
+      <Hand />
     </div>
   )
 }

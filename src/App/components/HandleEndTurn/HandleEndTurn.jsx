@@ -9,7 +9,7 @@ import { updateCards } from "../../supabase/updateCards"
 import cards from "../../functions/cards"
 
 function HandleEndTurn() {
-  const { tableCard, users, appId } = useContext(VariablesContext)
+  const { tableCard, users, appId, locYourTurn } = useContext(VariablesContext)
 
   const { handleSetInfo, setHandCard, setHandBlocker, setHandWithCards } =
     useContext(FunctionsContext)
@@ -43,10 +43,14 @@ function HandleEndTurn() {
     )
   }
 
-  return (
-    <button className={s.handle_end_turn_button} onClick={handleEndTurn}>
-      <FontAwesomeIcon icon={faCheck} />
-    </button>
-  )
+  if (locYourTurn) {
+    return (
+      <button className={s.handle_end_turn_button} onClick={handleEndTurn}>
+        <FontAwesomeIcon icon={faCheck} />
+      </button>
+    )
+  } else {
+    null
+  }
 }
 export default React.memo(HandleEndTurn)

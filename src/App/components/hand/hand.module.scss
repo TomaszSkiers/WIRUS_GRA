@@ -4,6 +4,7 @@
   justify-content: space-evenly;
   align-items: stretch;
   gap: 4px;
+  margin-top: auto;
   .photo {
     flex: 1; // Każda karta zajmie równą część szerokości kontenera
     max-width: calc(25% - 2px); // Maksymalna szerokość, aby zachować marginesy

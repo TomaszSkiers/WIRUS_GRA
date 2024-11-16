@@ -2,28 +2,10 @@
   height: 100%;
   width: 100%;
   border: 1px solid red;
+  display: flex;
+  flex-direction: column;
   .top_buttons_container {
     display: flex;
     justify-content: space-between;
-
-    // button {
-    //   // padding: 10px 20px;
-    //   width: 50px;
-    //   height: 50px;
-    //   color: green;
-    //   font-size: 1rem;
-    //   font-weight: bold;
-    // }
-    .wait{
-        display: flex;
-        width: 50px;
-        height: 50px;
-        color: magenta;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.5rem;
-    }
   }
-  
-  
 }

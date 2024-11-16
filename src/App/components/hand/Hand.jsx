@@ -13,14 +13,19 @@ function Hand() {
   const [selectedCards, setSelectedCards] = useState([])
   const [lockRerol, setLockRerol] = useState(false)
 
-  const { handleSetInfo } = useContext(FunctionsContext) //zmienna do podawania info
-  const { setHandCard } = useContext(FunctionsContext)
-  const { handBlocker } = useContext(VariablesContext)
-  const { handWithCards } = useContext(VariablesContext)
-  const { setHandWithCards } = useContext(FunctionsContext)
-  const { locYourTurn } = useContext(VariablesContext)
-  const { setTableBlocker } = useContext(FunctionsContext)
-  const { setMoreThanOneCardChecked } = useContext(FunctionsContext)
+  const {
+    handleSetInfo,
+    setHandCard,
+    setHandWithCards,
+    setTableBlocker,
+    setMoreThanOneCardChecked,
+  } = useContext(FunctionsContext);
+  
+  const {
+    handBlocker,
+    handWithCards,
+    locYourTurn,
+  } = useContext(VariablesContext);
 
   const handlePhotoClick = (cardNumber, cardName, index) => {
     if (handBlocker) return //blokada ponownego losowania karty

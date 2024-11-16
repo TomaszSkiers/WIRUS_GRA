@@ -1,4 +1,18 @@
 .table_color_info {
+    @media (max-width: 800px) and (orientation: portrait){
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 2;
+    }
+
+    @media (max-width:850px ) and (orientation: landscape){
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 2;
+    }
+    border: 1px solid lime;
     padding: 5px 10px;
     display: flex;
     flex-direction: column;

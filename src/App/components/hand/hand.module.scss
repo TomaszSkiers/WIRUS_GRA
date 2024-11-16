@@ -1,16 +1,31 @@
 .hand_container {
+  @media (max-width: 800px) and (orientation: portrait){
+    grid-column-start: 1;
+    grid-column-end: -1;
+    grid-row-start: 3;
+    grid-row-end: 4;
+  }
+
+  @media (max-width: 850px) and (orientation: landscape){
+    grid-column-start: 3;
+    grid-column-end: -1;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    align-self: end;
+  }
+
+  
   border: 3px solid gray;
   display: flex;
   justify-content: space-evenly;
   align-items: stretch;
   gap: 4px;
-  margin-top: auto;
+  
   .photo {
     flex: 1; // Każda karta zajmie równą część szerokości kontenera
     max-width: calc(25% - 2px); // Maksymalna szerokość, aby zachować marginesy
     border-radius: 8px;
     border: 2px solid white;
-
     &:hover {
       cursor: pointer;
     }

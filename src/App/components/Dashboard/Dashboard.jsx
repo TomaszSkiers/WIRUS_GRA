@@ -46,17 +46,15 @@ function Dashboard() {
 
   return (
     <div className={s.dashboard_container}>
-      <div className={s.top_buttons_container}>
-        <JoinTheGame />
-        <EndTheGame />
-        <TableColorInfo />
-        <Hourglass />
-        <HandleEndTurn />
-      </div>
+      <JoinTheGame />
+      <EndTheGame />
+      <TableColorInfo />
+      <Hourglass />
+      <HandleEndTurn />
 
       <Info />
-      <Tables />
       <Hand />
+      <Tables />
     </div>
   )
 }

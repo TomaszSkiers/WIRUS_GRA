@@ -1,11 +1,15 @@
 .dashboard_container {
   height: 100%;
   width: 100%;
-  border: 1px solid red;
-  display: flex;
-  flex-direction: column;
-  .top_buttons_container {
-    display: flex;
-    justify-content: space-between;
+  display: grid;
+
+  @media (max-width: 800px) and (orientation: portrait) {
+    grid-template-columns: 50px 1fr 50px;
+    grid-template-rows: 50px 50px auto 1fr;
+  }
+
+  @media (max-width: 850px) and (orientation: landscape) {
+    grid-template-columns: 50px 1fr 1fr 50px;
+    grid-template-rows: 50px 1fr 1fr;
   }
 }

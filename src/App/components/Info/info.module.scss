@@ -1,8 +1,21 @@
-.info_container{
-    border: 1px solid white;
-    height: 100px;
-    padding: 10px;
-    p{
-        color: white;
-    }
+.info_container {
+  @media (max-width: 800px) and (orientation: portrait) {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    grid-row-start: 2;
+    grid-row-end: 3;
+  }
+
+  @media (max-width: 850px) and ( orientation: landscape){
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+  }
+
+  border: 1px solid white;
+  padding: 10px;
+  p {
+    color: white;
+  }
 }

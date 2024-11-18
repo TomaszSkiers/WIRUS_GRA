@@ -1,3 +1,4 @@
+@import '../../styles/mixins.scss';
 .join_the_game_button {
   grid-column-start: 1;
   grid-column-end: 2;
@@ -8,4 +9,5 @@
   color: green;
   font-size: 1rem;
   font-weight: bold;
+
 }

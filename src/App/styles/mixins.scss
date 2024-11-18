@@ -1,0 +1,67 @@
+@mixin responsive($device, $orientation: null) {
+  @if $device == 'tablet' and $orientation == 'portrait' {
+    @media (max-width: 768px) and (orientation: portrait) {
+      @content;
+    }
+  } @else if $device == 'tablet' and $orientation == 'landscape' {
+    @media (max-width: 768px) and (orientation: landscape) {
+      @content;
+    }
+  } @else {
+    @warn "Nieznane urządzenie lub orientacja: #{$device}, #{$orientation}";
+  }
+}
+ /*
+ Przykład użycia:
+
+  .container {
+   Styl dla tabletów w pionie 
+  @include responsive('tablet', 'portrait') {
+    background-color: lightblue;
+    font-size: 16px;
+  }
+
+   Styl dla tabletów w poziomie 
+  @include responsive('tablet', 'landscape') {
+    background-color: lightgreen;
+    font-size: 18px;
+  }
+}
+*/
+
+@mixin responsive-orientation($min-width, $max-width, $aspect-ratio) {
+  @media (min-width: #{$min-width}) and (max-width: #{$max-width}) and (aspect-ratio: #{$aspect-ratio}) {
+    @content;
+  }
+}
+/*
+.container {
+  @include responsive-orientation(320px, 768px, '3/4') {
+    background-color: lightblue; 
+  }
+
+  @include responsive-orientation(769px, 1024px, '4/3') {
+    background-color: lightgreen; 
+  }
+}
+*/
+
+  
+  
+  /*
+  -----------------------------------------
+  | Urządzenie            | Rozdzielczość |
+  -----------------------------------------
+  | Małe smartfony        | max-width: 320px |
+  | Smartfony             | max-width: 480px |
+  | Duże smartfony        | max-width: 640px |
+  | Tablety (pionowo)     | max-width: 768px |
+  | Tablety (poziomo)     | max-width: 1024px |
+  | Małe laptopy          | max-width: 1280px |
+  | Standardowe laptopy   | max-width: 1440px |
+  | Monitory Full HD      | max-width: 1920px |
+  | Monitory Ultra HD     | max-width: 2560px |
+  -----------------------------------------
+ */
+
+  

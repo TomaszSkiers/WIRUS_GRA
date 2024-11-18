@@ -1,0 +1,13 @@
+.empty_card_container{
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+
+    .photo {
+        
+        max-width: calc(17% - 2px); // Dopasowuje szerokość do dostępnego miejsca uwzględniając `gap`
+        border: 2px solid lightslategrey;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+}

@@ -7,6 +7,8 @@ import { useContext, useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRotate } from "@fortawesome/free-solid-svg-icons"
 import { FunctionsContext, VariablesContext } from "../Context/Context"
+import CardContainer from "../CardsContainer/CardContainer"
+import EmptyCardContainer from "../EmptyCardContainer/EmptyCardContainer"
 
 function Hand() {
   const [randomCards, setRandomCards] = useState(getRandomCards(cards, 3))
@@ -18,14 +20,13 @@ function Hand() {
     setHandCard,
     setHandWithCards,
     setTableBlocker,
-    setMoreThanOneCardChecked,
-  } = useContext(FunctionsContext);
-  
-  const {
-    handBlocker,
-    handWithCards,
-    locYourTurn,
-  } = useContext(VariablesContext);
+    setMoreThanOneCardChecked
+  } = useContext(FunctionsContext)
+
+  const { handBlocker, handWithCards, locYourTurn, users, appId } =
+    useContext(VariablesContext)
+
+  const me = users.filter(user => user.app_id === appId)
 
   const handlePhotoClick = (cardNumber, cardName, index) => {
     if (handBlocker) return //blokada ponownego losowania karty
@@ -88,27 +89,39 @@ function Hand() {
     //blokuję klikanie na stołach
     setTableBlocker(true)
   }
-
+//todo ------------------------
   return (
-    <div className={s.hand_container}>
-      {handWithCards.map((card, index) => (
-        <img
-          key={index}
-          className={s.photo}
-          src={`./photos/${card}.png`}
-          onClick={() => handlePhotoClick(index + 1, card, index)}
-          data-number={index + 1}
-          style={{
-            borderColor: selectedCards.includes(index) ? "red" : "white",
-            filter: selectedCards.includes(index)
-              ? "brightness(1.2)"
-              : "brightness(1)"
-          }}
+    <div className={s.hand_container}> 
+      {me[0] ? (
+        <CardContainer
+          key={me[0].id}
+          user={me[0]}
+          userId={me[0].app_id}
+          color={me[0].table}
         />
-      ))}
-      <button onClick={rerollSelectedCards}>
-        <FontAwesomeIcon icon={faRotate} />
-      </button>
+      ) : (
+        <EmptyCardContainer />
+      )}
+      <div className={s.wrap}>
+        {handWithCards.map((card, index) => (
+          <img
+            key={index}
+            className={s.photo}
+            src={`./photos/${card}.png`}
+            onClick={() => handlePhotoClick(index + 1, card, index)}
+            data-number={index + 1}
+            style={{
+              borderColor: selectedCards.includes(index) ? "red" : "white",
+              filter: selectedCards.includes(index)
+                ? "brightness(1.2)"
+                : "brightness(1)"
+            }}
+          />
+        ))}
+        <button onClick={rerollSelectedCards}>
+          <FontAwesomeIcon icon={faRotate} />
+        </button>
+      </div>
     </div>
   )
 }

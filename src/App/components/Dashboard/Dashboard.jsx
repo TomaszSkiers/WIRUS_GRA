@@ -12,6 +12,7 @@ import JoinTheGame from "../JoinTheGame/JoinTheGame"
 import EndTheGame from "../EndTheGame/EndTheGame"
 import TableColorInfo from "../TableColorInfo/TableColorInfo"
 import Hourglass from "../Hourglass/Hourglass"
+// import { width } from "@fortawesome/free-solid-svg-icons/fa0"
 
 function Dashboard() {
   const navigate = useNavigate()
@@ -51,10 +52,10 @@ function Dashboard() {
       <TableColorInfo />
       <Hourglass />
       <HandleEndTurn />
-
       <Info />
-      <Hand />
       <Tables />
+      
+      <Hand />
     </div>
   )
 }

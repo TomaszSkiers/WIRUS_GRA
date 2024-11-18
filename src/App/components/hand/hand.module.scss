@@ -1,37 +1,34 @@
 .hand_container {
-  @media (max-width: 800px) and (orientation: portrait){
-    grid-column-start: 1;
-    grid-column-end: -1;
-    grid-row-start: 3;
-    grid-row-end: 4;
-  }
+  grid-column-start: 1;
+  grid-column-end: -1;
+  grid-row-start: 4;
+  grid-row-end: 5;
 
-  @media (max-width: 850px) and (orientation: landscape){
-    grid-column-start: 3;
-    grid-column-end: -1;
-    grid-row-start: 3;
-    grid-row-end: 4;
-    align-self: end;
-  }
-
-  
-  border: 3px solid gray;
+  // border: 3px solid gray;
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: stretch;
-  gap: 4px;
-  
+
+ 
+
+  .wrap{
+    display: flex;
+    justify-content: space-evenly;
+  }
+
   .photo {
     flex: 1; // Każda karta zajmie równą część szerokości kontenera
-    max-width: calc(25% - 2px); // Maksymalna szerokość, aby zachować marginesy
+    max-width: calc(17% - 2px); // Maksymalna szerokość, aby zachować marginesy
     border-radius: 8px;
     border: 2px solid white;
     &:hover {
       cursor: pointer;
     }
   }
-  button{
-    flex: 1;
+  button {
+    // flex: 1;
+    width: 65px;
     color: green;
     font-size: 3rem;
     display: flex;
@@ -40,8 +37,49 @@
     background: none;
     border: 3px solid white;
     border-radius: 8px;
-    &:active{
+    &:active {
       background-color: mediumaquamarine;
     }
   }
+  /* Smartfony w orientacji Portrait (320px - 480px szerokości) */
+  @media (max-width: 480px) {
+    gap: 20px;
+  }
+
+  /* Smartfony w orientacji Landscape (więcej niż 480px szerokości) */
+  @media (min-width: 481px) and (max-width: 767px) {
+    
+  }
+
+  /* === Tablety === */
+
+  /* Tablety w orientacji Portrait (481px - 768px szerokości) */
+  @media (min-width: 481px) and (max-width: 768px) {
+    grid-column-start: 3;
+    grid-column-end: -1;
+    grid-row-start: 2;
+    grid-row-end: -1;
+  }
+
+  /* Tablety w orientacji Landscape (769px - 1024px szerokości) */
+  @media (min-width: 769px) and (max-width: 1024px)  {
+    grid-column-start: 3;
+    grid-column-end: -1;
+    grid-row-start: 2;
+    grid-row-end: -1;
+    
+  }
+  @media (min-width: 1025px) and (max-width: 1280px) {
+    grid-column-start: 3;
+    grid-column-end: -1;
+    grid-row-start: 2;
+    grid-row-end: -1;
+  }
+  @media (min-width: 1281px) {
+    grid-column-start: 3;
+    grid-column-end: -1;
+    grid-row-start: 2;
+    grid-row-end: -1;
+  }
 }
+// grid-area: row-start / column-start / row-end / column-end;

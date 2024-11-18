@@ -54,4 +54,85 @@ albo zaznacz jeden organ
     dobrzy by było żeby moja zmiana aktualizowała innych ale nie mnie bo mój stan jest aktualny, i tylko
     trzeba nanieść zmiany do bazy danych a lokalnie już stan jest ok 
 
-//
+
+  -----------------------------------------
+  | Urządzenie            | Rozdzielczość |
+  -----------------------------------------
+  | Małe smartfony        | max-width: 320px |
+  | Smartfony             | max-width: 480px |
+  | Duże smartfony        | max-width: 640px |
+  | Tablety (pionowo)     | max-width: 768px |
+  | Tablety (poziomo)     | max-width: 1024px |
+  | Małe laptopy          | max-width: 1280px |
+  | Standardowe laptopy   | max-width: 1440px |
+  | Monitory Full HD      | max-width: 1920px |
+  | Monitory Ultra HD     | max-width: 2560px |
+  -----------------------------------------
+
+
+//wysokość telefonu 1130px
+
+//czyli dla szerokości  767 w górę już wyświetlam telefon ale i wysokość
+też jest ważna i musi mieć 1130px, żeby poprawnie wyświetlić cały telefon
+
+window.innerWidth window.innerHieght
+if ( width > 767 and height > 1130 ) {
+    ustawiam ekran na 480 x 850 
+    grid jak dla mobile
+    portrait i landscape nieistotne
+}else{
+    ustawiam width i height na 100%
+    if ( orientation == portrait ){
+        grid dla mobile - portrait [jedno pod durgim, hand na dole]
+    }else{
+        grid dla mobile - landscape [z lewej stoły, z prawej ręka na dole]
+    }
+}
+
+[
+  {
+    "id": "9ce7328d-8158-4226-95fe-6eb23ba88acb",
+    "order": 3,
+    "table": "yellow",
+    "k1": "empty-card",
+    "k2": "empty-card",
+    "k3": "empty-card",
+    "k4": "empty-card",
+    "app_id": null,
+    "time": "2024-11-18T09:36:40.633682+00:00"
+  },
+  {
+    "id": "e179dd19-eb61-45df-82d2-1bac37393caf",
+    "order": 0,
+    "table": "red",
+    "k1": "empty-card",
+    "k2": "empty-card",
+    "k3": "empty-card",
+    "k4": "empty-card",
+    "app_id": "IBv2VYa0",
+    "time": "2024-11-18T10:28:35.487076+00:00"
+  },
+  {
+    "id": "e37bac78-6888-4043-9937-839af5b717a7",
+    "order": 2,
+    "table": "green",
+    "k1": "empty-card",
+    "k2": "empty-card",
+    "k3": "empty-card",
+    "k4": "empty-card",
+    "app_id": null,
+    "time": "2024-11-18T07:47:12.744839+00:00"
+  },
+  {
+    "id": "bfa82c45-4673-4229-80ff-017ba847fea9",
+    "order": 1,
+    "table": "blue",
+    "k1": "brain",
+    "k2": "heart",
+    "k3": "pelvis",
+    "k4": "empty-card",
+    "app_id": null,
+    "time": "2024-11-18T07:47:05.052641+00:00"
+  }
+]
+

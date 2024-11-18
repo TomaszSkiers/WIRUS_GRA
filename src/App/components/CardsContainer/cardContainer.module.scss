@@ -2,29 +2,33 @@
   display: flex;
   flex-direction: column;
   border-radius: 4px;
-
+  // flex-grow: 1;
   h3 {
     color: white;
   }
 
   .photos_wrapper {
     display: flex;
-    gap: 3px; // Przestrzeń między zdjęciami
+    justify-content: space-evenly;
     width: 100%;
+    height: 100%;
 
     .photo {
       flex: 1;
-      max-width: calc(25% - 2px); // Dopasowuje szerokość do dostępnego miejsca uwzględniając `gap`
+      max-width: calc(
+        17% - 2px
+      ); // Dopasowuje szerokość do dostępnego miejsca uwzględniając `gap`
       border: 2px solid lightslategrey;
       border-radius: 8px;
       object-fit: cover;
-     
 
       &:hover {
         cursor: pointer;
       }
     }
   }
+  @media (min-width: 769px) and (max-width: 1024px)  {
+    // flex-grow: 1;
+    
+  }
 }
-
-

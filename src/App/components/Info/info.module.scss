@@ -1,21 +1,57 @@
+@import "../../styles/mixins.scss";
 .info_container {
-  @media (max-width: 800px) and (orientation: portrait) {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    grid-row-start: 2;
-    grid-row-end: 3;
-  }
+  grid-column-start: 1;
+  grid-column-end: -1;
+  grid-row-start: 2;
+  grid-row-end: 3;
 
-  @media (max-width: 850px) and ( orientation: landscape){
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 2;
-  }
-
-  border: 1px solid white;
   padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   p {
     color: white;
+    font-weight: bold;
   }
+    /* Smartfony w orientacji Portrait (320px - 480px szerokości) */
+    @media (max-width: 480px) {
+    
+    }
+  
+    /* Smartfony w orientacji Landscape (więcej niż 480px szerokości) */
+    @media (min-width: 481px) and (max-width: 767px) {
+      
+    }
+  
+    /* === Tablety === */
+  
+    /* Tablety w orientacji Portrait (481px - 768px szerokości) */
+    @media (min-width: 481px) and (max-width: 768px) {
+      grid-column-start: 3;
+      grid-column-end: 4;
+      grid-row-start: 1;
+      grid-row-end: 2;
+    }
+  
+    /* Tablety w orientacji Landscape (769px - 1024px szerokości) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      grid-column-start: 3;
+      grid-column-end: 4;
+      grid-row-start: 1;
+      grid-row-end: 2;
+    }
+    @media (min-width: 1025px) and (max-width: 1280px) {
+      grid-column-start: 3;
+      grid-column-end: 4;
+      grid-row-start: 1;
+      grid-row-end: 2;
+    }
+    @media (min-width: 1281px) {
+      grid-column-start: 3;
+      grid-column-end: 4;
+      grid-row-start: 1;
+      grid-row-end: 2;
+    }
+  
 }
+

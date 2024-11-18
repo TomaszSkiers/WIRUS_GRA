@@ -37,9 +37,9 @@ export const MyProvider = ({ children }) => {
 
   const navigate = useNavigate()
 
-  const setSwitchButtons = useCallback((setting)=> {
+  const setSwitchButtons = useCallback((setting) => {
     setSwitchButtonsCopy(setting)
-  },[])
+  }, [])
 
   const setMyTableColor = useCallback((setting) => {
     setMyTableColorCopy(setting)
@@ -236,6 +236,7 @@ export const MyProvider = ({ children }) => {
         console.error("Błąd podczas pobierania aktywnych użytkowników:", error)
       } else {
         //* to mogę sprawdzić, który gracz się nie wylogował, jeżeli log będzie starszy niż 30s tzn. że nie gra
+        console.log(data, 'dane wszystkich pobranych za pierwszym razem') //todo
         setUsers(data) //zapisz stan gry do stanu
       }
     }

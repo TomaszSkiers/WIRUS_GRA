@@ -1,3 +1,9 @@
 .app_container{
   height: 100%;
+  margin: 0; /* Usuń domyślne marginesy */
+  display: flex; /* Ustaw flexbox, aby wyrównać obraz */
+  justify-content: center; /* Wyśrodkuj poziomo */
+  align-items: center; /* Wyśrodkuj pionowo */
+  // background: url(../../public/photos/iphone.png) no-repeat center center;
+  background-size: 550px auto; 
 }

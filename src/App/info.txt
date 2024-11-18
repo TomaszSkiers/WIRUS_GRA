@@ -10,7 +10,7 @@ pswd ZVyWFxMRYUs16VFj
 --- baza danych -----------------------------------
 
 Limit Zapytań do bazy danych
-    Zapytania na Godzinę: Ograniczenie do 500 zapytań na godzinę dla projektu.
+    Zapytania na godzinę: ograniczenie do 500 zapytań na godzinę dla projektu.
     Limit Połączeń: Maksymalnie 5 połączeń do bazy danych jednocześnie.
 
 key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqZ29qaWh6bnVveHB3amJja3VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk4NjI5NjYsImV4cCI6MjA0NTQzODk2Nn0.PLThYi8xvaMoW_DiorHM6J8lIQp0Ik-EMhQmVStbTWg
@@ -136,3 +136,22 @@ if ( width > 767 and height > 1130 ) {
   }
 ]
 
+// jak pierwszy gracz się zaloguje a nie ma jeszcze innych, mam możliwość położyć kartę a trzeba to zablokować 
+
+//od czasu do czasu nie zadziała ekran końcowy, tak jakby nie poszedł payload, i problem bo innni nie mają informacji o wygranej
+może wysłać to dwa razy? a może zrobić potwierdzenie od innych że dostali wiadomość i jak nie to wysłać jeszcze raz ? 
+
+// po przeróbce interfejsu znowu w ptyę renderów, już mnie to zaczyna wkurwiać powoli,  
+
+// po przekładce kodu do kontekstu trzeba przeanalizować które zmienne resetować po odmontowaniu komponentu bo kontekst trzyma stare ustawienia
+    i to powoduje dziwne zachowanie i blokowania się interfejsu
+
+// zalogowałem się klikam w kartę w ręku potem na stolik i wkleiło pustą kartę ?
+
+// idę na spacer... 
+
+//    if (tableCard) {
+      //wysłanie kart tylko jak karta została wybrana
+      const card = users[index][`k${tableCard[1] + 1}`] //to jest karta << --- tu mam błąd Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'k1')
+      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card)
+    }

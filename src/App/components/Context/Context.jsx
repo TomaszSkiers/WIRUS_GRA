@@ -164,6 +164,7 @@ export const MyProvider = ({ children }) => {
     }
 
     if (users.length === 1) {
+      
       handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
     }
   }, [users])

@@ -126,48 +126,48 @@ export const MyProvider = ({ children }) => {
 
   //*przenoszę obsługę users z dashboard do useContext
   useEffect(() => {
-    // sortowanie po czasie
-    const usersSortedByTime = [...users].sort(
-      (a, b) => new Date(a.time) - new Date(b.time)
-    )
-    //* wyświetlam do testów
-    // console.log(usersSortedByTime)
-    // console.log(users, 'wyświetlam stan users po aktualizacji')
+    const processGameEnd = async () => {
+      // Sortowanie po czasie
+      const usersSortedByTime = [...users].sort(
+        (a, b) => new Date(a.time) - new Date(b.time)
+      )
 
-    //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
+      // Ustawienie tury gracza
+      if (usersSortedByTime[0]?.app_id === appId) {
+        setLocYourTurn(true)
+      } else {
+        setLocYourTurn(false)
+      }
 
-    if (usersSortedByTime[0]?.app_id === appId) {
-      setLocYourTurn(true)
-    } else {
-      setLocYourTurn(false)
+      // Sprawdzanie wygranej
+      try {
+        const winner = await handleEndOfGames(users) // Oczekiwanie na wynik funkcji
+        if (winner) {
+          // Pobieranie obiektu gracza, który wygrał
+          const userObject = users.find((user) => user.id === winner)
+          if (userObject) {
+            const myId = users.find((user) => user.app_id === appId)?.id
+
+            // Nawigacja do komponentu Winner
+            navigate("/winner", {
+              state: { userObject, myId }
+            })
+          } else {
+            console.error("Nie znaleziono zwycięzcy w liście użytkowników.")
+          }
+        }
+      } catch (error) {
+        console.error("Błąd podczas sprawdzania wygranej:", error)
+      }
+
+      // Obsługa przypadku jednego użytkownika
+      if (users.length === 1) {
+        handleSetInfo("jesteś jedynym graczem, poczekaj na pozostałych")
+      }
     }
 
-    //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
-    //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
-    //* czyli tu powinno zadziałać
-    //* tylko najlepiej żeby sprawdzało wszystkich graczy
-    //* jeżeli zwróci mi ID wygranego gracza to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
-    //* brawo wygrana teg i tego i przycisk, czy nowa gra?
-
-    const winner = handleEndOfGames(users)
-    // console.log("winner", winner)
-    // const winner = false
-    if (winner) {
-      // pobieram gracza który wygrał do wysyłki reszcie
-      const userObject = users.find((user) => user.id === winner)
-
-      //wyszukuję siebie
-      const myId = users.find((user) => user.app_id === appId)
-      navigate("/winner", {
-        state: { userObject, myId: myId?.id }
-      })
-    }
-
-    if (users.length === 1) {
-      
-      handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
-    }
-  }, [users])
+    processGameEnd()
+  }, [users, appId, navigate, handleSetInfo])
 
   //*przenoszę obsługę tableCard z dashboard do useContext
   useEffect(() => {
@@ -237,7 +237,7 @@ export const MyProvider = ({ children }) => {
         console.error("Błąd podczas pobierania aktywnych użytkowników:", error)
       } else {
         //* to mogę sprawdzić, który gracz się nie wylogował, jeżeli log będzie starszy niż 30s tzn. że nie gra
-        console.log(data, 'dane wszystkich pobranych za pierwszym razem') //todo
+        console.log(data, "dane wszystkich pobranych za pierwszym razem") //todo
         setUsers(data) //zapisz stan gry do stanu
       }
     }

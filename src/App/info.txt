@@ -155,3 +155,10 @@ może wysłać to dwa razy? a może zrobić potwierdzenie od innych że dostali 
       const card = users[index][`k${tableCard[1] + 1}`] //to jest karta << --- tu mam błąd Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'k1')
       await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card)
     }
+
+
+// pomimo, że już jesteśmy na Winner to kontekst cały czas odbiera payload   
+
+// wejść do zakładki komponents i podejrzeć zmienne w kontekście, które nie uległy zmianie po przejściu z Dashboard -> Winner i je ustawić na wartości wejściowe przy odmontowaniu komponentu
+
+// nie zawsze działa uruchomienie Winner 

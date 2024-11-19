@@ -15,32 +15,53 @@ function HandleEndTurn() {
     useContext(FunctionsContext)
 
   const handleEndTurn = async () => {
-    console.log("zmienna table card", tableCard)
+    try {
+      console.log("zmienna table card", tableCard)
 
-    const index = users.findIndex((user) => user.id === tableCard[0])
-    if (tableCard) {
-      //wysłanie kart tylko jak karta została wybrana
-      const card = users[index][`k${tableCard[1] + 1}`] //to jest karta
-      await updateCards(tableCard[0], `k${tableCard[1] + 1}`, card)
-    }
+      // Weryfikacja tableCard
+      if (!tableCard || tableCard.length < 2) {
+        console.error("Błąd: tableCard jest nieprawidłowe:", tableCard)
+        return
+      }
 
-    //tu muszę najpierw zaktualizować w bazie dane dla stolika a później przesłać czas żeby wymusić kolejność
-    //* dlaczego tak zrobiłem, mmm chyba dlatego, że mogę zaktualizować kartę przeciwnika
-    //* tu muszę przemyśleć temat bo to powoduje niepotrzebne renderowanie komponentów
-    await injectNewTime(appId)
+      // Znajdź użytkownika po ID
+      const index = users.findIndex((user) => user.id === tableCard[0])
+      if (index === -1) {
+        console.error("Błąd: Nie znaleziono użytkownika z ID:", tableCard[0])
+        return
+      }
 
-    handleSetInfo("karty wysłane")
+      const user = users[index]
+      const cardKey = `k${tableCard[1] + 1}`
 
-    //czyszczę handCard
-    setHandCard(false)
-    //odblokowuję klikanie na ręku
-    setHandBlocker(false)
-    //losowanie nowej karty tylko jednej w tym przypadku
-    setHandWithCards((prv) =>
-      prv.map((card) =>
-        card === "empty-card" ? getRandomCards(cards, 1)[0] : card
+      // Sprawdź, czy klucz istnieje w użytkowniku
+      if (!(cardKey in user)) {
+        console.error(`Błąd: Klucz ${cardKey} nie istnieje w użytkowniku`, user)
+        return
+      }
+
+      const card = user[cardKey]
+
+      // Wysyłanie karty
+      await updateCards(tableCard[0], cardKey, card)
+
+      // Aktualizacja czasu w bazie
+      await injectNewTime(appId)
+
+      // Informacja o wysłanych kartach
+      handleSetInfo("karty wysłane")
+
+      // Czyszczenie i aktualizacja UI
+      setHandCard(false)
+      setHandBlocker(false)
+      setHandWithCards((prv) =>
+        prv.map((card) =>
+          card === "empty-card" ? getRandomCards(cards, 1)[0] : card
+        )
       )
-    )
+    } catch (error) {
+      console.error("Błąd w handleEndTurn:", error)
+    }
   }
 
   if (locYourTurn) {

@@ -29,7 +29,7 @@ function Hand() {
   const me = users.filter(user => user.app_id === appId)
 
   const handlePhotoClick = (cardNumber, cardName, index) => {
-    // if (users.length === 1) return //blokada przy jednym graczu 
+    if (users.length === 1) return //blokada przy jednym graczu 
     if (handBlocker) return //blokada ponownego losowania karty
     if (lockRerol) return // zablokowanie ponownego losowania
     setHandCard([cardNumber, cardName]) //todo ??

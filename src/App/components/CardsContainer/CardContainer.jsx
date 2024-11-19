@@ -13,13 +13,15 @@ export default function CardContainer({ user, color }) {
   const { setTableCard } = useContext(FunctionsContext)
   const { setClickProtection } = useContext(FunctionsContext)
   const { clickProtection } = useContext(VariablesContext)
+  const { users } = useContext(VariablesContext)
 
   console.log("cardContainer się renderuje")
 
   const handlePhotoClick = (index) => {
     //klikać nie wolno jak położono kartę
-    console.log(locYourTurn)
+    // console.log(locYourTurn)
 
+    if (users.length === 1) return //blokada jak tylko jeden gracz
     if (tableBlocker) return
 
     // blokowanie onClicka jeśli nie moja tura

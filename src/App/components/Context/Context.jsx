@@ -1,6 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { createContext, useCallback, useMemo, useState, useEffect } from "react"
+import {
+  createContext,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  useRef
+} from "react"
 import { generateSimpleID } from "../../functions/simpleID"
 import { handleEndOfGames } from "../../functions/handleEndOfGame"
 import { useNavigate } from "react-router-dom"
@@ -34,6 +41,7 @@ export const MyProvider = ({ children }) => {
   const [locId, setLocId] = useState(false) //blokuje ponowne zapisywanie Id do localStorage
   const [locFetAcUsers, setlocFetAcUsers] = useState(false) //blokuje ponowne pobieranie całej tabeli
   const [switchButtons, setSwitchButtonsCopy] = useState(false)
+  const subscriptionRef = useRef(null)
 
   const navigate = useNavigate()
 
@@ -91,83 +99,55 @@ export const MyProvider = ({ children }) => {
     setHandWithCardsCopy(params)
   }, [])
 
-  const functions = useMemo(
-    () => ({
-      handleSetInfo,
-      handleSetTimer,
-      setUsers,
-      setTableCard,
-      setHandCard,
-      setHandBlocker,
-      setHandWithCards,
-      setLocYourTurn,
-      setTableBlocker,
-      setMoreThanOneCardChecked,
-      setClickProtection,
-      setMyTableColor,
-      setSwitchButtons
-    }),
-    [
-      handleSetInfo,
-      handleSetTimer,
-      setUsers,
-      setTableCard,
-      setHandCard,
-      setHandBlocker,
-      setHandWithCards,
-      setLocYourTurn,
-      setTableBlocker,
-      setMoreThanOneCardChecked,
-      setClickProtection,
-      setMyTableColor,
-      setSwitchButtons
-    ]
-  )
+
 
   //*przenoszę obsługę users z dashboard do useContext
   useEffect(() => {
     const processGameEnd = async () => {
-      // Sortowanie po czasie
+      // sortowanie po czasie
       const usersSortedByTime = [...users].sort(
         (a, b) => new Date(a.time) - new Date(b.time)
       )
+      //* wyświetlam do testów
+      // console.log(usersSortedByTime)
+      // console.log(users, 'wyświetlam stan users po aktualizacji')
 
-      // Ustawienie tury gracza
+      //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
+
       if (usersSortedByTime[0]?.app_id === appId) {
         setLocYourTurn(true)
       } else {
         setLocYourTurn(false)
       }
 
-      // Sprawdzanie wygranej
-      try {
-        const winner = await handleEndOfGames(users) // Oczekiwanie na wynik funkcji
-        if (winner) {
-          // Pobieranie obiektu gracza, który wygrał
-          const userObject = users.find((user) => user.id === winner)
-          if (userObject) {
-            const myId = users.find((user) => user.app_id === appId)?.id
+      //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
+      //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
+      //* czyli tu powinno zadziałać
+      //* tylko najlepiej żeby sprawdzało wszystkich graczy
+      //* jeżeli zwróci mi ID wygranego gracza to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
+      //* brawo wygrana teg i tego i przycisk, czy nowa gra?
 
-            // Nawigacja do komponentu Winner
-            navigate("/winner", {
-              state: { userObject, myId }
-            })
-          } else {
-            console.error("Nie znaleziono zwycięzcy w liście użytkowników.")
-          }
-        }
-      } catch (error) {
-        console.error("Błąd podczas sprawdzania wygranej:", error)
+      const winner = await handleEndOfGames(users)
+      // console.log("winner", winner)
+      // const winner = false
+      if (winner) {
+        // pobieram gracza który wygrał do wysyłki reszcie
+        const userObject = users.find((user) => user.id === winner)
+
+        //wyszukuję siebie
+        const myId = users.find((user) => user.app_id === appId)
+        navigate("/winner", {
+          state: { userObject, myId: myId?.id }
+        })
       }
 
-      // Obsługa przypadku jednego użytkownika
       if (users.length === 1) {
-        handleSetInfo("jesteś jedynym graczem, poczekaj na pozostałych")
+        handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
       }
     }
 
     processGameEnd()
-  }, [users, appId, navigate, handleSetInfo])
+  }, [users])
 
   //*przenoszę obsługę tableCard z dashboard do useContext
   useEffect(() => {
@@ -225,110 +205,174 @@ export const MyProvider = ({ children }) => {
     updateCards()
   }, [tableCard]) // todo << ------------------------------------------------- end
 
-  useEffect(() => {
-    const fetchActiveUsers = async () => {
-      //f. do pobierania wszystkich użytkowników cały stan gry tylko na początku jeden raz
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .not("app_id", "is", null)
+  const fetchActiveUsers = async () => {
+    //f. do pobierania wszystkich użytkowników cały stan gry tylko na początku jeden raz
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .not("app_id", "is", null)
 
-      if (error) {
-        console.error("Błąd podczas pobierania aktywnych użytkowników:", error)
-      } else {
-        //* to mogę sprawdzić, który gracz się nie wylogował, jeżeli log będzie starszy niż 30s tzn. że nie gra
-        console.log(data, "dane wszystkich pobranych za pierwszym razem") //todo
-        setUsers(data) //zapisz stan gry do stanu
-      }
+    if (error) {
+      console.error("Błąd podczas pobierania aktywnych użytkowników:", error)
+    } else {
+      //* to mogę sprawdzić, który gracz się nie wylogował, jeżeli log będzie starszy niż 30s tzn. że nie gra
+      console.log(data, "dane wszystkich pobranych za pierwszym razem") //todo
+      setUsers(data) //zapisz stan gry do stanu
     }
+  }
 
-    // Inicjalizacja subskrypcji
-    const subscription = supabase
-      .channel("public:users")
-      .on(
-        "postgres_changes",
-        { event: "update", schema: "public", table: "users" },
-        async (payload) => {
-          console.log("ładunek z bazy danych", payload.new)
-          setTableBlocker(false) //wyłączam blokowanie kliknięć na stoliku
+  const activateSubscription = useCallback(() => {
+    if (!subscriptionRef.current) {
+      //
+      // Inicjalizacja subskrypcji
+      // const subscription = supabase
+      subscriptionRef.current = supabase
+        .channel("public:users")
+        .on(
+          "postgres_changes",
+          { event: "update", schema: "public", table: "users" },
+          async (payload) => {
+            console.log("ładunek z bazy danych", payload.new)
+            setTableBlocker(false) //wyłączam blokowanie kliknięć na stoliku
 
-          if (payload.new.app_id === appId) {
-            //zakładan filtr tylko na moje wiadomości
+            if (payload.new.app_id === appId) {
+              //zakładan filtr tylko na moje wiadomości
 
-            //todo ---------- counter
-            //*jak przyleci moje id to znaczy że jest tylko jeden gracz to trzeba wyłączyć
+              //todo ---------- counter
+              //*jak przyleci moje id to znaczy że jest tylko jeden gracz to trzeba wyłączyć
 
-            //todo ------------end counter
+              //todo ------------end counter
 
-            if (!locId) {
-              // to muszę zapisać tylko raz później zablokować
-              localStorage.setItem("userData", payload.new.id)
-              setMyTableColor(payload.new.table)
-              setLocId(true)
-            }
-            if (!locFetAcUsers) {
-              //* tu mogę sprawdzić czy users.lenght === 1
-              // jak dołączam do gry pobieram wszystkich userów później będę na bieżąco aktualizował stan
-              await fetchActiveUsers()
-              setlocFetAcUsers(true) //wyłączm ponowne pobieranie wszystkich graczy muszę to zrobić tylko na początku później oszczędzam zapytania do bazy danych
-            } else {
-              //* to dopiero sie wykona po wciśnięciu dołącz do gry jak zostaną pobrani wszyscy gracze (wszyscy gracze są pobierani tylko raz na początku)
-              setUsers(
-                (
-                  prv // jak wlecą wiadomości odemnie to mój stan też trzeba zaktualizować
-                ) =>
-                  prv.map(
-                    (
-                      user //jak znajdzisz w stanie obiekt z moim ID to go zaktualizuj
-                    ) =>
-                      user.id === payload.new.id
-                        ? { ...user, ...payload.new }
-                        : user
-                  )
-              )
-            }
-          } else {
-            //todo ------------------------------------------------------------------------------------------------------------  timer
-            //informacja o nowych kartach
-            handleSetInfo(`gracz ${payload.new.table} zakończył turę`)
-            //todo -------------- counter
-            //* jak przyleci obce id to przedłużam czas
-            // odblokowuję rękę
-
-            //todo ----------------- end counter
-            // tutaj filtrowanie obcych id
-            // jak wleci obce id aktualizuję sobie stan gry/ userów
-            // tu wleci mój aktualy stan z kartami i czasem ja jestem najpóźniej w stanie gry więc aktywny jest teraz najwcześniejszy user
-            setUsers((prv) => {
-              // aktualizacja stanu users (stanu gry)
-              const index = prv.findIndex((user) => user.id === payload.new.id)
-
-              // Sprawdzamy, czy app_id jest null
-              if (payload.new.app_id === null) {
-                // Usuwamy użytkownika ze stanu, jeśli app_id jest null
-                return prv.filter((user) => user.id !== payload.new.id)
+              if (!locId) {
+                // to muszę zapisać tylko raz później zablokować
+                localStorage.setItem("userData", payload.new.id)
+                setMyTableColor(payload.new.table)
+                setLocId(true)
               }
-
-              if (index !== -1) {
-                //jeżeli przyleciał user, który już istnieje w stanie, to go aktualizuję
-                const updatedUsers = [...prv]
-                updatedUsers[index] = { ...updatedUsers[index], ...payload.new }
-                return updatedUsers
+              if (!locFetAcUsers) {
+                //* tu mogę sprawdzić czy users.lenght === 1
+                // jak dołączam do gry pobieram wszystkich userów później będę na bieżąco aktualizował stan
+                await fetchActiveUsers()
+                setlocFetAcUsers(true) //wyłączm ponowne pobieranie wszystkich graczy muszę to zrobić tylko na początku później oszczędzam zapytania do bazy danych
               } else {
-                //jeżeli przyleciał user, którego nie ma w stanie to go dodaję
-                return [...prv, payload.new]
+                //* to dopiero sie wykona po wciśnięciu dołącz do gry jak zostaną pobrani wszyscy gracze (wszyscy gracze są pobierani tylko raz na początku)
+                setUsers(
+                  (
+                    prv // jak wlecą wiadomości odemnie to mój stan też trzeba zaktualizować
+                  ) =>
+                    prv.map(
+                      (
+                        user //jak znajdzisz w stanie obiekt z moim ID to go zaktualizuj
+                      ) =>
+                        user.id === payload.new.id
+                          ? { ...user, ...payload.new }
+                          : user
+                    )
+                )
               }
-            })
-          }
-        }
-      )
-      .subscribe()
+            } else {
+              //todo ------------------------------------------------------------------------------------------------------------  timer
+              //informacja o nowych kartach
+              handleSetInfo(`gracz ${payload.new.table} zakończył turę`)
+              //todo -------------- counter
+              //* jak przyleci obce id to przedłużam czas
+              // odblokowuję rękę
 
-    return () => {
-      subscription.unsubscribe()
+              //todo ----------------- end counter
+              // tutaj filtrowanie obcych id
+              // jak wleci obce id aktualizuję sobie stan gry/ userów
+              // tu wleci mój aktualy stan z kartami i czasem ja jestem najpóźniej w stanie gry więc aktywny jest teraz najwcześniejszy user
+              setUsers((prv) => {
+                // aktualizacja stanu users (stanu gry)
+                const index = prv.findIndex(
+                  (user) => user.id === payload.new.id
+                )
+
+                // Sprawdzamy, czy app_id jest null
+                if (payload.new.app_id === null) {
+                  // Usuwamy użytkownika ze stanu, jeśli app_id jest null
+                  return prv.filter((user) => user.id !== payload.new.id)
+                }
+
+                if (index !== -1) {
+                  //jeżeli przyleciał user, który już istnieje w stanie, to go aktualizuję
+                  const updatedUsers = [...prv]
+                  updatedUsers[index] = {
+                    ...updatedUsers[index],
+                    ...payload.new
+                  }
+                  return updatedUsers
+                } else {
+                  //jeżeli przyleciał user, którego nie ma w stanie to go dodaję
+                  return [...prv, payload.new]
+                }
+              })
+            }
+          }
+        )
+        .subscribe()
+      console.log("subskrypcja włączona")
     }
   }, [])
 
+  const deactivateSubscription = useCallback(() => {
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe()
+      subscriptionRef.current = null
+      console.log("Subskrypcja wyłączona.")
+    }
+  }, [])
+
+  // useEffect(() => {
+  //   return () => {
+  //     subscription.unsubscribe()
+  //   }
+  // }, [])
+
+  useEffect(() => {
+    // Automatyczne aktywowanie subskrypcji przy montowaniu
+    activateSubscription()
+    return () => {
+      // Automatyczne wyłączanie subskrypcji przy odmontowywaniu
+      deactivateSubscription()
+    }
+  }, [activateSubscription, deactivateSubscription])
+  const functions = useMemo(
+    () => ({
+      handleSetInfo,
+      handleSetTimer,
+      setUsers,
+      setTableCard,
+      setHandCard,
+      setHandBlocker,
+      setHandWithCards,
+      setLocYourTurn,
+      setTableBlocker,
+      setMoreThanOneCardChecked,
+      setClickProtection,
+      setMyTableColor,
+      setSwitchButtons,
+      activateSubscription,
+      deactivateSubscription,
+    }),
+    [
+      handleSetInfo,
+      handleSetTimer,
+      setUsers,
+      setTableCard,
+      setHandCard,
+      setHandBlocker,
+      setHandWithCards,
+      setLocYourTurn,
+      setTableBlocker,
+      setMoreThanOneCardChecked,
+      setClickProtection,
+      setMyTableColor,
+      setSwitchButtons,
+      activateSubscription,
+      deactivateSubscription,
+    ]
+  )
   return (
     <VariablesContext.Provider
       value={{

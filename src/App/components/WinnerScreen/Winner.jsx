@@ -9,7 +9,7 @@ export default function Winner() {
   const navigate = useNavigate()
   const location = useLocation()
   const { appId, users } = useContext(VariablesContext)
-  const { setUsers } = useContext(FunctionsContext)
+  const { setUsers, deactivateSubscription } = useContext(FunctionsContext)
 
   // Wybranie użytkownika na podstawie appId
   const [user] = useState(users.find((user) => user.app_id === appId))
@@ -77,7 +77,16 @@ export default function Winner() {
     }
 
     handleWinnerLogic()
-  }, [userObject, appId, setUsers])
+
+    // Dezaktywacja subskrypcji przy zamontowaniu
+    deactivateSubscription()
+
+    // Cleanup przy odmontowaniu komponentu
+    return () => {
+      console.log("Komponent Winner odmontowany. Dezaktywuję subskrypcję.")
+      deactivateSubscription()
+    }
+  }, [userObject, appId, setUsers, deactivateSubscription])
 
   return (
     <div

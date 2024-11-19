@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom"
 import s from "./welcomeScreen.module.scss"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { setNullToAppId } from "../../supabase/setNullToAppId"
+import { FunctionsContext } from "../Context/Context"
 
 export default function WelcomeScreen() {
   const navigate = useNavigate()
+  const {deactivateSubscription} = useContext(FunctionsContext)
 
   useEffect(() => {
+    // Dezaktywacja subskrypcji przy zamontowaniu
+    deactivateSubscription()
     const updateAppId = async () => {
       // sprzątanie po wyjściu z gry
       const dataFromLocalStorage = localStorage.getItem("userData")

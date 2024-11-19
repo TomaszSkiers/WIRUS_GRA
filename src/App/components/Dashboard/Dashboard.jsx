@@ -17,12 +17,18 @@ import Hourglass from "../Hourglass/Hourglass"
 function Dashboard() {
   const navigate = useNavigate()
 
-  const { setHandCard, setHandBlocker, handleSetInfo } =
-    useContext(FunctionsContext)
+  const {
+    setUsers,
+    setHandCard,
+    setHandBlocker,
+    handleSetInfo,
+    activateSubscription,
+  } = useContext(FunctionsContext)
 
   console.log("dashboard się renderuje")
 
   useEffect(() => {
+    activateSubscription()
     // todo Dodaję obsługę nieoczekiwaniego zamknięcia strony przez użytkownika
     // window.addEventListener("beforeunload", ()=>{
     //   const myId = users.find((user) => user.app_id === appId)?.id;
@@ -39,7 +45,8 @@ function Dashboard() {
       //* to zauważyłem problem przy starcie kładł starą kartę i blokował rękę
       setHandCard(false)
       setHandBlocker(false)
-      // setUsers([])
+
+      setUsers([])
       //*-------------------------------------------------
       //todo  window.removeEventListener("beforeunload", handleBeforeUnload)
     }
@@ -54,7 +61,7 @@ function Dashboard() {
       <HandleEndTurn />
       <Info />
       <Tables />
-      
+
       <Hand />
     </div>
   )

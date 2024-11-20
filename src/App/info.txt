@@ -162,3 +162,7 @@ może wysłać to dwa razy? a może zrobić potwierdzenie od innych że dostali 
 // wejść do zakładki komponents i podejrzeć zmienne w kontekście, które nie uległy zmianie po przejściu z Dashboard -> Winner i je ustawić na wartości wejściowe przy odmontowaniu komponentu
 
 // nie zawsze działa uruchomienie Winner 
+
+// jeśli ktoś nie zamknie aplikacji i ona sobie działa to zawiesi pozostałych
+muszę wprowadzić mechanizm czasowy np 3 cykle bezczynnośći i wylogowanie
+

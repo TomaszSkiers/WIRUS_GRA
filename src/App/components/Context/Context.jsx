@@ -99,12 +99,31 @@ export const MyProvider = ({ children }) => {
     setHandWithCardsCopy(params)
   }, [])
 
-
-
   //*przenoszę obsługę users z dashboard do useContext
   useEffect(() => {
-    const processGameEnd = async () => {
-      // sortowanie po czasie
+
+      //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
+      //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
+      //* czyli tu powinno zadziałać
+      //* tylko najlepiej żeby sprawdzało wszystkich graczy
+      //* jeżeli zwróci mi ID wygranego gracza to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
+      //* brawo wygrana teg i tego i przycisk, czy nowa gra?
+
+      // const winner = handleEndOfGames(users)
+      // console.log("winner", winner)
+      // const winner = false
+      // if (winner) {
+      //   // pobieram gracza który wygrał do wysyłki reszcie
+      //   const userObject = users.find((user) => user.id === winner)
+
+      //   //wyszukuję siebie
+      //   const myId = users.find((user) => user.app_id === appId)
+      //   navigate("/winner", {
+      //     state: { userObject, myId: myId?.id }
+      //   })
+      // }
+      // sortowanie po czasie, jak rozpraszam to nie modyfikuję oryginalnej users
+
       const usersSortedByTime = [...users].sort(
         (a, b) => new Date(a.time) - new Date(b.time)
       )
@@ -120,33 +139,16 @@ export const MyProvider = ({ children }) => {
         setLocYourTurn(false)
       }
 
-      //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
-      //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
-      //* czyli tu powinno zadziałać
-      //* tylko najlepiej żeby sprawdzało wszystkich graczy
-      //* jeżeli zwróci mi ID wygranego gracza to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
-      //* brawo wygrana teg i tego i przycisk, czy nowa gra?
 
-      const winner = await handleEndOfGames(users)
-      // console.log("winner", winner)
-      // const winner = false
-      if (winner) {
-        // pobieram gracza który wygrał do wysyłki reszcie
-        const userObject = users.find((user) => user.id === winner)
 
-        //wyszukuję siebie
-        const myId = users.find((user) => user.app_id === appId)
-        navigate("/winner", {
-          state: { userObject, myId: myId?.id }
-        })
-      }
+
 
       if (users.length === 1) {
         handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
       }
-    }
+    
 
-    processGameEnd()
+
   }, [users])
 
   //*przenoszę obsługę tableCard z dashboard do useContext
@@ -353,7 +355,7 @@ export const MyProvider = ({ children }) => {
       setMyTableColor,
       setSwitchButtons,
       activateSubscription,
-      deactivateSubscription,
+      deactivateSubscription
     }),
     [
       handleSetInfo,
@@ -370,7 +372,7 @@ export const MyProvider = ({ children }) => {
       setMyTableColor,
       setSwitchButtons,
       activateSubscription,
-      deactivateSubscription,
+      deactivateSubscription
     ]
   )
   return (

@@ -28,6 +28,7 @@ function Dashboard() {
   console.log("dashboard się renderuje")
 
   useEffect(() => {
+
     activateSubscription()
     // todo Dodaję obsługę nieoczekiwaniego zamknięcia strony przez użytkownika
     // window.addEventListener("beforeunload", ()=>{
@@ -45,7 +46,8 @@ function Dashboard() {
       //* to zauważyłem problem przy starcie kładł starą kartę i blokował rękę
       setHandCard(false)
       setHandBlocker(false)
-
+      //generuj nowe idAplikacji
+  
       setUsers([])
       //*-------------------------------------------------
       //todo  window.removeEventListener("beforeunload", handleBeforeUnload)

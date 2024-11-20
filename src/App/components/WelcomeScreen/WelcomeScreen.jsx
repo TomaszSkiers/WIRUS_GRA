@@ -6,11 +6,15 @@ import { FunctionsContext } from "../Context/Context"
 
 export default function WelcomeScreen() {
   const navigate = useNavigate()
-  const {deactivateSubscription} = useContext(FunctionsContext)
+  const {deactivateSubscription,} = useContext(FunctionsContext)
+  
 
   useEffect(() => {
     // Dezaktywacja subskrypcji przy zamontowaniu
     deactivateSubscription()
+
+    
+
     const updateAppId = async () => {
       // sprzątanie po wyjściu z gry
       const dataFromLocalStorage = localStorage.getItem("userData")

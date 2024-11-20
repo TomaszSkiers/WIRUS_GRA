@@ -9,7 +9,7 @@ import {
   useRef
 } from "react"
 import { generateSimpleID } from "../../functions/simpleID"
-import { handleEndOfGames } from "../../functions/handleEndOfGame"
+// import { handleEndOfGames } from "../../functions/handleEndOfGame"
 import { useNavigate } from "react-router-dom"
 import { checkCards } from "../../functions/checkCard"
 import supabase from "../../supabase/supabase"
@@ -20,7 +20,7 @@ export const FunctionsContext = createContext()
 
 // Tworzymy komponent dostarczający (Provider) kontekst
 export const MyProvider = ({ children }) => {
-  const [appId] = useState(generateSimpleID)
+  const [appId, setAppIdCopy] = useState(generateSimpleID())
   const [info, setInfo] = useState("info z kontekstu")
   const [moreThanOneCardChecked, setMoreThanOneCardCheckedCopy] =
     useState(false)
@@ -44,6 +44,10 @@ export const MyProvider = ({ children }) => {
   const subscriptionRef = useRef(null)
 
   const navigate = useNavigate()
+
+  const setAppId = useCallback(() => {
+    setAppIdCopy(generateSimpleID())
+  }, [])
 
   const setSwitchButtons = useCallback((setting) => {
     setSwitchButtonsCopy(setting)
@@ -101,54 +105,37 @@ export const MyProvider = ({ children }) => {
 
   //*przenoszę obsługę users z dashboard do useContext
   useEffect(() => {
-
-      //* tu mogę wywołać metodę do sprawdzania wygranej i chyba nie zaleznie od usera
-      //* mogę zawsze sprawdzić wszystkich; w     Cards handlePhotoClilk aktualizuje tableCards a tableCard aktualizuje users
-      //* czyli tu powinno zadziałać
-      //* tylko najlepiej żeby sprawdzało wszystkich graczy
-      //* jeżeli zwróci mi ID wygranego gracza to jakaś reakcja musi być, tylko jaka?, może komponent kończący z
-      //* brawo wygrana teg i tego i przycisk, czy nowa gra?
-
-      // const winner = handleEndOfGames(users)
-      // console.log("winner", winner)
-      // const winner = false
-      // if (winner) {
-      //   // pobieram gracza który wygrał do wysyłki reszcie
-      //   const userObject = users.find((user) => user.id === winner)
-
-      //   //wyszukuję siebie
-      //   const myId = users.find((user) => user.app_id === appId)
-      //   navigate("/winner", {
-      //     state: { userObject, myId: myId?.id }
-      //   })
-      // }
-      // sortowanie po czasie, jak rozpraszam to nie modyfikuję oryginalnej users
-
-      const usersSortedByTime = [...users].sort(
-        (a, b) => new Date(a.time) - new Date(b.time)
-      )
-      //* wyświetlam do testów
-      // console.log(usersSortedByTime)
-      // console.log(users, 'wyświetlam stan users po aktualizacji')
-
-      //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
-
-      if (usersSortedByTime[0]?.app_id === appId) {
-        setLocYourTurn(true)
-      } else {
-        setLocYourTurn(false)
+    if (users.length > 0) {
+      const userObject = users.find((user) => user.app_id === appId)
+      if (userObject) {
+        const { k1, k2, k3, k4 } = userObject
+        if (
+          ![k1, k2, k3, k4].some(
+            (card) => card.includes("virus") || card.includes("empty")
+          )
+        ) {
+          navigate("/winner", { state: { userObject } })
+        }
       }
+    }
 
+    //* wyświetlam do testów
+    // console.log(usersSortedByTime)
+    // console.log(users, 'wyświetlam stan users po aktualizacji')
 
+    //np: jeżeli id jest równe mojemu to odblokowuję ekran i mója kolej
+    const usersSortedByTime = [...users].sort(
+      (a, b) => new Date(a.time) - new Date(b.time)
+    )
+    if (usersSortedByTime[0]?.app_id === appId) {
+      setLocYourTurn(true)
+    } else {
+      setLocYourTurn(false)
+    }
 
-
-
-      if (users.length === 1) {
-        handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
-      }
-    
-
-
+    if (users.length === 1) {
+      handleSetInfo("jesteś jedynym graczem poczekaj na pozostałych")
+    }
   }, [users])
 
   //*przenoszę obsługę tableCard z dashboard do useContext
@@ -173,7 +160,7 @@ export const MyProvider = ({ children }) => {
         return
       }
 
-      // tutaj będzie moja funkcja await do sprawdzanaia
+      // tutaj będzie funkcja await do sprawdzanaia
       // i rezultat do wstawienia do stanu
       // result [card, info]
       const result = await checkCards(users, handCard, tableCard)
@@ -273,6 +260,17 @@ export const MyProvider = ({ children }) => {
                 )
               }
             } else {
+              const { k1, k2, k3, k4 } = payload.new
+              if (
+                ![k1, k2, k3, k4].some(
+                  (card) => card.includes("virus") || card.includes("empty")
+                )
+              ) {
+                const userObject = {}
+                Object.assign(userObject, payload.new)
+                navigate("/winner", { state: { userObject } })
+              }
+
               //todo ------------------------------------------------------------------------------------------------------------  timer
               //informacja o nowych kartach
               handleSetInfo(`gracz ${payload.new.table} zakończył turę`)
@@ -355,7 +353,8 @@ export const MyProvider = ({ children }) => {
       setMyTableColor,
       setSwitchButtons,
       activateSubscription,
-      deactivateSubscription
+      deactivateSubscription,
+      setAppId
     }),
     [
       handleSetInfo,
@@ -372,7 +371,8 @@ export const MyProvider = ({ children }) => {
       setMyTableColor,
       setSwitchButtons,
       activateSubscription,
-      deactivateSubscription
+      deactivateSubscription,
+      setAppId
     ]
   )
   return (

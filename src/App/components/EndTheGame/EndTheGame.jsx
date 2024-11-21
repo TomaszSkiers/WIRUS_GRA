@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 
 function EndTheGame() {
   const { setSwitchButtons } = useContext(FunctionsContext)
-  const { switchButtons } = useContext(VariablesContext)
+  const { switchButtons, } = useContext(VariablesContext)
   const navigate = useNavigate()
 
   const endTheGame = () => {
@@ -17,7 +17,7 @@ function EndTheGame() {
 
   useEffect(() => {
     return () => {
-      setSwitchButtons(false)
+      setSwitchButtons(false) 
     }
   }, [])
 

@@ -1,6 +1,7 @@
 import supabase from "./supabase";
 
 export async function putEmptyCard(id) {
+    console.log('user jest')
     const {error} = await supabase
     .from('users')
     .update({

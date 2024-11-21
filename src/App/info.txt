@@ -201,3 +201,32 @@ muszę wprowadzić mechanizm czasowy np 3 cykle bezczynnośći i wylogowanie
         }
       }
     }
+
+    [
+    {
+        "id": "9ec8ee9f-73c5-4640-a77e-3ebb8a329aba",
+        "order": 3,
+        "table": "yellow",
+        "k1": "empty-card",
+        "k2": "empty-card",
+        "k3": "empty-card",
+        "k4": "empty-card",
+        "app_id": "dC9LAPqY",
+        "time": "2024-11-20T10:36:04.72598+00:00"
+    },
+    {
+        "id": "e179dd19-eb61-45df-82d2-1bac37393caf",
+        "order": 0,
+        "table": "red",
+        "k1": "empty-card",
+        "k2": "empty-card",
+        "k3": "empty-card",
+        "k4": "empty-card",
+        "app_id": "Tg06zdB2",
+        "time": "2024-11-20T10:45:22.84337+00:00"
+    }
+]
+
+jestem pierwszym graczem i oczekuję na innych, włączam timer i odświeżam swój czas co 30s żeby 
+kolejny, który wejdzie mnie nie wywalił, czekam tak 4 x 30s i wyskakuję do WelcomeScreen bo nikt 
+nie dołączył, czyli taki czas na to żeby wszyscy się dołączyli do gry 
